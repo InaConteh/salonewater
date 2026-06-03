@@ -1,10 +1,11 @@
-"""
-Placeholder model files - to be implemented in Phase 2
+from app.models.water_source import WaterSource
+from app.models.report import Report
+from app.models.maintenance_log import MaintenanceLog
+from app.models.repair_case import RepairCase
 
-These files will contain the database models:
-- water_source.py: WaterSource model
-- report.py: Report model
-- maintenance_log.py: MaintenanceLog model
-- repair_case.py: RepairCase model
-"""
-# Placeholder files - implementations follow in Phase 2
+__all__ = [
+    'WaterSource',
+    'Report',
+    'MaintenanceLog',
+    'RepairCase',
+]

@@ -1,30 +1,28 @@
-"""
-Python Dependencies for CleanFlow SL Backend
-
-Core Framework:
-- Flask: Lightweight web framework
-- Flask-SQLAlchemy: ORM for database operations
-- Flask-Migrate: Database migration management
-
-Database:
-- psycopg2-binary: PostgreSQL adapter for Python
-
-External APIs:
-- africastalking: SMS gateway integration
-- requests: HTTP library for external API calls
-
-Utilities:
-- python-dotenv: Environment variable management
-- cryptography: Secure password hashing
-
-Testing:
-- pytest: Testing framework
-- pytest-cov: Code coverage reporting
-
-Production:
-- gunicorn: WSGI HTTP server
-- python-json-logger: Structured logging
-"""
+# Python Dependencies for CleanFlow SL Backend
+#
+# Core Framework:
+# - Flask: Lightweight web framework
+# - Flask-SQLAlchemy: ORM for database operations
+# - Flask-Migrate: Database migration management
+#
+# Database:
+# - psycopg2-binary: PostgreSQL adapter for Python
+#
+# External APIs:
+# - africastalking: SMS gateway integration
+# - requests: HTTP library for external API calls
+#
+# Utilities:
+# - python-dotenv: Environment variable management
+# - cryptography: Secure password hashing
+#
+# Testing:
+# - pytest: Testing framework
+# - pytest-cov: Code coverage reporting
+#
+# Production:
+# - gunicorn: WSGI HTTP server
+# - python-json-logger: Structured logging
 
 Flask==2.3.3
 Flask-SQLAlchemy==3.0.5
@@ -33,7 +31,7 @@ Flask-CORS==4.0.0
 Flask-JWT-Extended==4.5.2
 
 SQLAlchemy==2.0.20
-psycopg2-binary==2.9.7
+psycopg[binary]==3.3.4
 
 africastalking==1.2.4
 requests==2.31.0

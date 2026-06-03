@@ -267,7 +267,7 @@ All sensitive configuration stored in `.env` (not committed to Git):
 
 ```env
 # Database
-DATABASE_URL=postgresql://cleanflow_user:secure_password@localhost:5432/cleanflow_db
+DATABASE_URL=postgresql://cleanflow:inaconteh@localhost:5432/cleanflow_db
 
 # SMS Gateway
 AT_USERNAME=your_africas_talking_username
