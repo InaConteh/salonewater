@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: cleanflow-db
+    environment:
+      POSTGRES_USER: cleanflow_user
+      POSTGRES_PASSWORD: secure_password
+      POSTGRES_DB: cleanflow_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cleanflow_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - cleanflow-network
+
+  # Flask Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cleanflow-backend
+    environment:
+      FLASK_APP: wsgi.py
+      FLASK_ENV: development
+      DATABASE_URL: postgresql://cleanflow_user:secure_password@db:5432/cleanflow_db
+      AT_USERNAME: ${AT_USERNAME}
+      AT_API_KEY: ${AT_API_KEY}
+      SECRET_KEY: ${SECRET_KEY}
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+    command: flask run --host=0.0.0.0
+    networks:
+      - cleanflow-network
+
+  # React Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cleanflow-frontend
+    environment:
+      VITE_API_URL: http://localhost:5000/api
+      VITE_APP_NAME: CleanFlow SL
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev
+    networks:
+      - cleanflow-network
+
+volumes:
+  postgres_data:
+
+networks:
+  cleanflow-network:
+    driver: bridge
