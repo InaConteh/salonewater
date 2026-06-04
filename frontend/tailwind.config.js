@@ -1,30 +1,45 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
-        // CleanFlow Color Palette (from Design System)
-        primary: '#0056b3',      // Primary Blue for branding
-        success: '#28a745',      // Green - Safe water
-        warning: '#ffc107',      // Yellow - Boil water
-        danger: '#dc3545',       // Red - Unsafe/Down
-        neutral: '#6c757d',      // Gray - Secondary text
-        bgLight: '#f8f9fa',      // Background color
+        primary: {
+          DEFAULT: '#0056b3',
+          dark: '#004085',
+          light: '#e7f1fb',
+        },
+        success: {
+          DEFAULT: '#28a745',
+          dark: '#218838',
+          light: '#d4edda',
+        },
+        warning: {
+          DEFAULT: '#ffc107',
+          dark: '#e0a800',
+          light: '#fff3cd',
+        },
+        danger: {
+          DEFAULT: '#dc3545',
+          dark: '#c82333',
+          light: '#f8d7da',
+        },
+        neutral: {
+          DEFAULT: '#6c757d',
+          dark: '#495057',
+          light: '#e9ecef',
+        },
+        surface: '#ffffff',
+        bgLight: '#f8f9fa',
+        body: '#212529',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
       },
-      spacing: {
-        'xs': '0.25rem',
-        'sm': '0.5rem',
-        'base': '1rem',
-        'lg': '1.5rem',
-        'xl': '2rem',
-      }
+      boxShadow: {
+        card: '0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.06)',
+        cardHover: '0 4px 16px rgba(0, 0, 0, 0.12)',
+      },
     },
   },
   plugins: [],
