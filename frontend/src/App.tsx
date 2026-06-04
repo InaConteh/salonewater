@@ -1,59 +1,54 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AdminLayout, MainLayout } from '@/components/common'
+import { ProtectedRoute } from '@/components/common/ProtectedRoute'
 import { ToastProvider } from '@/contexts/ToastContext'
-import { Home } from '@/pages/Home'
+import { Analytics } from '@/features/dashboard/Analytics'
+import { DispatchCenter } from '@/features/dashboard/DispatchCenter'
+import { SourceManagement } from '@/features/dashboard/SourceManagement'
+import { UserManagement } from '@/features/dashboard/UserManagement'
+import { About } from '@/pages/About'
+import { AdminLogin } from '@/pages/AdminLogin'
+import { AlternativeFinder } from '@/pages/AlternativeFinder'
+import { Contact } from '@/pages/Contact'
 import { DesignSystemPage } from '@/pages/DesignSystemPage'
+import { HealthLibrary } from '@/pages/HealthLibrary'
+import { Home } from '@/pages/Home'
+import { MapPage } from '@/pages/MapPage'
+import { PrivacyPolicy } from '@/pages/PrivacyPolicy'
+import { SMSGuide } from '@/pages/SMSGuide'
+import { Terms } from '@/pages/Terms'
+import { AdminAlerts } from '@/pages/admin/AdminAlerts'
 import { AdminDashboard } from '@/pages/admin/AdminDashboard'
-import { AdminPlaceholder } from '@/pages/admin/AdminPlaceholder'
 
 function App() {
   return (
     <ToastProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/admin/login" element={<AdminLogin />} />
+
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />
+            <Route path="/map" element={<MapPage />} />
+            <Route path="/find-water" element={<AlternativeFinder />} />
+            <Route path="/health" element={<HealthLibrary />} />
+            <Route path="/sms-guide" element={<SMSGuide />} />
             <Route path="/design-system" element={<DesignSystemPage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/contact" element={<Contact />} />
           </Route>
 
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<AdminDashboard />} />
-            <Route
-              path="sources"
-              element={
-                <AdminPlaceholder
-                  title="Water Sources"
-                  description="Manage sources and status — Phase 5."
-                />
-              }
-            />
-            <Route
-              path="dispatch"
-              element={
-                <AdminPlaceholder
-                  title="Repair Dispatch"
-                  description="Assign teams and track repairs — Phase 5."
-                />
-              }
-            />
-            <Route
-              path="alerts"
-              element={
-                <AdminPlaceholder
-                  title="Alerts & Warnings"
-                  description="Drought and contamination alerts — Phase 5."
-                />
-              }
-            />
-            <Route
-              path="tips"
-              element={
-                <AdminPlaceholder
-                  title="Education Hub"
-                  description="Health tips and guides — Phase 5."
-                />
-              }
-            />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="sources" element={<SourceManagement />} />
+              <Route path="dispatch" element={<DispatchCenter />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="alerts" element={<AdminAlerts />} />
+              <Route path="users" element={<UserManagement />} />
+            </Route>
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

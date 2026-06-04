@@ -1,5 +1,8 @@
 export { AdminLayout } from './AdminLayout'
 export { Footer } from './Footer'
+export { KpiCards } from './KpiCards'
+export { LoadingState, ErrorState } from './LoadingState'
 export { MainLayout } from './MainLayout'
 export { Navbar } from './Navbar'
+export { ProtectedRoute } from './ProtectedRoute'
 export { Sidebar } from './Sidebar'

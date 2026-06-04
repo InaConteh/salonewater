@@ -1,13 +1,19 @@
 import { NavLink } from 'react-router-dom'
-import { BookIcon, SunCloudIcon, WaterDropIcon, WrenchIcon } from '@/assets/icons'
+import {
+  BookIcon,
+  SunCloudIcon,
+  WaterDropIcon,
+  WrenchIcon,
+} from '@/assets/icons'
 import { cn } from '@/lib/cn'
 
 const links = [
   { to: '/admin', label: 'Dashboard', icon: WaterDropIcon, end: true },
-  { to: '/admin/sources', label: 'Water Sources', icon: WaterDropIcon },
+  { to: '/admin/sources', label: 'Water sources', icon: WaterDropIcon },
   { to: '/admin/dispatch', label: 'Dispatch', icon: WrenchIcon },
+  { to: '/admin/analytics', label: 'Analytics', icon: SunCloudIcon },
   { to: '/admin/alerts', label: 'Alerts', icon: SunCloudIcon },
-  { to: '/admin/tips', label: 'Education', icon: BookIcon },
+  { to: '/admin/users', label: 'Users', icon: BookIcon },
 ]
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
@@ -26,7 +32,7 @@ export function Sidebar() {
     >
       <div className="p-4">
         <p className="mb-3 text-xs font-bold uppercase tracking-wider text-neutral">
-          Admin Portal
+          Admin portal
         </p>
         <nav className="flex flex-col gap-1">
           {links.map(({ to, label, icon: Icon, end }) => (

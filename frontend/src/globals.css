@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import 'leaflet/dist/leaflet.css';
 
 @tailwind base;
 @tailwind components;
@@ -45,4 +46,10 @@
   .sr-only-focusable:not(:focus):not(:focus-within) {
     @apply sr-only;
   }
+}
+
+/* Leaflet marker override */
+.cf-map-marker {
+  background: transparent !important;
+  border: none !important;
 }

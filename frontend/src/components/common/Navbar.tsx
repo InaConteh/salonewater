@@ -1,17 +1,28 @@
 import { Link, NavLink } from 'react-router-dom'
 import { WaterDropIcon } from '@/assets/icons'
 import { cn } from '@/lib/cn'
+import { useAuthStore } from '@/store/authStore'
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
-    'rounded-lg px-3 py-2 text-sm font-semibold transition-colors',
+    'rounded-lg px-2.5 py-2 text-sm font-semibold transition-colors sm:px-3',
     isActive
       ? 'bg-primary text-white'
       : 'text-body hover:bg-primary-light hover:text-primary',
   )
 
+const publicLinks = [
+  { to: '/', label: 'Home', end: true },
+  { to: '/map', label: 'Map' },
+  { to: '/find-water', label: 'Find water' },
+  { to: '/health', label: 'Health' },
+  { to: '/sms-guide', label: 'SMS' },
+]
+
 export function Navbar() {
   const appName = import.meta.env.VITE_APP_NAME || 'CleanFlow SL'
+  const token = useAuthStore((s) => s.token)
+  const logout = useAuthStore((s) => s.logout)
 
   return (
     <header className="sticky top-0 z-40 border-b border-neutral-light bg-surface/95 backdrop-blur">
@@ -25,16 +36,33 @@ export function Navbar() {
           <span className="text-xl font-bold">{appName}</span>
         </Link>
 
-        <nav className="flex flex-wrap items-center gap-1" aria-label="Main navigation">
-          <NavLink to="/" className={navLinkClass} end>
-            Home
-          </NavLink>
-          <NavLink to="/design-system" className={navLinkClass}>
-            Design System
-          </NavLink>
-          <NavLink to="/admin" className={navLinkClass}>
-            Admin
-          </NavLink>
+        <nav
+          className="flex max-w-full flex-wrap items-center gap-0.5 sm:gap-1"
+          aria-label="Main navigation"
+        >
+          {publicLinks.map(({ to, label, end }) => (
+            <NavLink key={to} to={to} className={navLinkClass} end={end}>
+              {label}
+            </NavLink>
+          ))}
+          {token ? (
+            <>
+              <NavLink to="/admin" className={navLinkClass}>
+                Admin
+              </NavLink>
+              <button
+                type="button"
+                onClick={logout}
+                className="rounded-lg px-2.5 py-2 text-sm font-semibold text-neutral hover:text-danger"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <NavLink to="/admin/login" className={navLinkClass}>
+              Admin login
+            </NavLink>
+          )}
         </nav>
       </div>
     </header>
