@@ -36,13 +36,10 @@ def create_app(config_name=None):
     db.init_app(app)
     migrate.init_app(app, db)
     
-    # Create app context for database operations
+    # Import models to ensure they're registered with SQLAlchemy
+    # The migration engine will manage schema creation instead of auto-creating tables here.
     with app.app_context():
-        # Import models to ensure they're registered with SQLAlchemy
         from app.models import water_source, report, maintenance_log, repair_case
-        
-        # Create database tables if they don't exist
-        db.create_all()
     
     # Register Blueprints
     from app.api import bp as api_bp

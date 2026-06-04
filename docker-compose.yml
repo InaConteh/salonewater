@@ -1,26 +1,6 @@
 version: '3.8'
 
 services:
-  # PostgreSQL Database
-  db:
-    image: postgres:15-alpine
-    container_name: cleanflow-db
-    environment:
-      POSTGRES_USER: cleanflow_user
-      POSTGRES_PASSWORD: secure_password
-      POSTGRES_DB: cleanflow_db
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U cleanflow_user"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - cleanflow-network
-
   # Flask Backend API
   backend:
     build:
@@ -30,15 +10,12 @@ services:
     environment:
       FLASK_APP: wsgi.py
       FLASK_ENV: development
-      DATABASE_URL: postgresql://cleanflow_user:secure_password@db:5432/cleanflow_db
+      DATABASE_URL: sqlite:///instance/cleanflow.db
       AT_USERNAME: ${AT_USERNAME}
       AT_API_KEY: ${AT_API_KEY}
       SECRET_KEY: ${SECRET_KEY}
     ports:
       - "5000:5000"
-    depends_on:
-      db:
-        condition: service_healthy
     volumes:
       - ./backend:/app
     command: flask run --host=0.0.0.0
@@ -64,9 +41,6 @@ services:
     command: npm run dev
     networks:
       - cleanflow-network
-
-volumes:
-  postgres_data:
 
 networks:
   cleanflow-network:

@@ -6,7 +6,7 @@
 # - Flask-Migrate: Database migration management
 #
 # Database:
-# - psycopg2-binary: PostgreSQL adapter for Python
+# - SQLite is used through Python's standard library sqlite3 driver
 #
 # External APIs:
 # - africastalking: SMS gateway integration
@@ -30,8 +30,7 @@ Flask-Migrate==4.0.4
 Flask-CORS==4.0.0
 Flask-JWT-Extended==4.5.2
 
-SQLAlchemy==2.0.20
-psycopg[binary]==3.3.4
+SQLAlchemy==2.0.32
 
 africastalking==1.2.4
 requests==2.31.0

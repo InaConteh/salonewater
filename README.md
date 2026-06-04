@@ -27,7 +27,7 @@ A comprehensive water security system designed for rural communities in Sierra L
 | Layer | Technology |
 |:------|:-----------|
 | **Backend** | Python 3.10+ / Flask |
-| **Database** | PostgreSQL |
+| **Database** | SQLite via SQLAlchemy |
 | **Frontend** | React / TypeScript / Tailwind CSS |
 | **SMS Gateway** | Africa's Talking API |
 | **Mapping** | Leaflet.js |
@@ -50,7 +50,6 @@ cleanflow-sl/
 ### Prerequisites
 - Python 3.10+
 - Node.js 16+
-- PostgreSQL 12+
 - Git
 
 ### Backend Setup
@@ -59,7 +58,7 @@ cd backend
 python3 -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
-cp ../.env.example ../.env
+cp ../.env.example .env
 flask db upgrade
 flask run
 ```
@@ -101,7 +100,7 @@ Copy `.env.example` to `.env` and configure:
 ```env
 FLASK_APP=wsgi.py
 FLASK_ENV=development
-DATABASE_URL=postgresql://username:password@localhost:5432/cleanflow_db
+DATABASE_URL=sqlite:///instance/cleanflow.db
 AT_USERNAME=your_africas_talking_username
 AT_API_KEY=your_africas_talking_api_key
 SECRET_KEY=your_secret_key_here

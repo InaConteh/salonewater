@@ -113,17 +113,15 @@ src/
 - `alembic.ini` - Migration configuration (placeholder)
 
 **What It Does:**
-- Sets up PostgreSQL database structure
+- Sets up SQLite database structure for local development
 - Creates user accounts with proper permissions
 - Provides multiple setup options (automated, manual, Docker)
 - Ensures database is ready to receive schema from Phase 2
 
 **Database to be Created:**
 ```
-Database: cleanflow_db
-User: cleanflow_user
-Password: secure_password (change in production!)
-Connection: postgresql://cleanflow_user:secure_password@localhost:5432/cleanflow_db
+Database file: backend/instance/cleanflow.db
+Connection: sqlite:///instance/cleanflow.db
 ```
 
 ---
@@ -233,15 +231,14 @@ These models define the "shape" of data stored in our database.
 
 You'll need:
 
-1. **PostgreSQL installed** - Provides the database engine
-2. **Python 3.10+** - Backend language
-3. **Node.js 16+** - Frontend language
+1. **Python 3.10+** - Backend language
+2. **Node.js 16+** - Frontend language
 
 Once those are installed:
 
-1. Initialize the database: `bash init_db.sql`
-2. Create backend virtual environment
-3. Install Python dependencies: `pip install -r requirements.txt`
+1. Create backend virtual environment
+2. Install Python dependencies: `pip install -r requirements.txt`
+3. Run migrations: `python -m flask db upgrade`
 4. Begin Phase 2 database model definition
 
 ---
@@ -252,7 +249,7 @@ Once those are installed:
 |:-----------|:--------|:--------|
 | Python | 3.10+ | Backend language |
 | Flask | 2.3 | Web framework |
-| PostgreSQL | 12+ | Database |
+| SQLite | Built-in | Local database |
 | React | 18.2 | Frontend framework |
 | TypeScript | 5.2 | Type safety |
 | Tailwind CSS | 3.3 | Styling |
@@ -267,7 +264,7 @@ All sensitive configuration stored in `.env` (not committed to Git):
 
 ```env
 # Database
-DATABASE_URL=postgresql://cleanflow:inaconteh@localhost:5432/cleanflow_db
+DATABASE_URL=sqlite:///instance/cleanflow.db
 
 # SMS Gateway
 AT_USERNAME=your_africas_talking_username
