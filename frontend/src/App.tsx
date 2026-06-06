@@ -19,7 +19,7 @@ import { SMSGuide } from '@/pages/SMSGuide'
 import { Terms } from '@/pages/Terms'
 import { AdminAlerts } from '@/pages/admin/AdminAlerts'
 import { AdminDashboard } from '@/pages/admin/AdminDashboard'
-
+import { HealthAssistant } from '@/pages/HealthAssistant'
 function App() {
   return (
     <ToastProvider>
@@ -32,6 +32,7 @@ function App() {
             <Route path="/map" element={<MapPage />} />
             <Route path="/find-water" element={<AlternativeFinder />} />
             <Route path="/health" element={<HealthLibrary />} />
+            <Route path="/health-assistant" element={<HealthAssistant />} />
             <Route path="/sms-guide" element={<SMSGuide />} />
             <Route path="/design-system" element={<DesignSystemPage />} />
             <Route path="/about" element={<About />} />

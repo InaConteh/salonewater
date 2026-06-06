@@ -51,10 +51,20 @@ export function HealthLibrary() {
   return (
     <div className="page-container space-y-6 py-8">
       <header>
-        <h1 className="text-3xl font-bold">Health library</h1>
-        <p className="mt-1 text-neutral">
-          Practical tips for safe water, sanitation, and maintenance.
-        </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Health library</h1>
+            <p className="mt-1 text-neutral">
+              Practical tips for safe water, sanitation, and maintenance.
+            </p>
+          </div>
+          <a
+            href="/health-assistant"
+            className="inline-flex items-center justify-center rounded-lg bg-blue-500 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-600"
+          >
+            Ask AI for help
+          </a>
+        </div>
       </header>
 
       <div className="grid gap-4 sm:grid-cols-2">

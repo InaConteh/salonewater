@@ -26,6 +26,12 @@ def api_index():
             '/api/sms/callback',
             '/api/analytics/kpis',
             '/api/analytics/trends',
+            '/api/ai/health',
+            '/api/ai/ask',
+            '/api/ai/stream',
+            '/api/ai/context/well/<well_id>',
+            '/api/ai/suggest-questions/<context>',
+            '/api/ai/translate',
         ],
     }
 
@@ -39,6 +45,5 @@ from app.api import (
     sms_callback,
     sources,
     tips,
+    ai_enhanced,
 )
-
-__all__ = ['bp']
