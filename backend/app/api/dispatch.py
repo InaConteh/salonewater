@@ -18,7 +18,10 @@ from app.utils.auth import ROLE_ADMIN, ROLE_TECHNICIAN, roles_required
 @jwt_required()
 @roles_required(ROLE_ADMIN, ROLE_TECHNICIAN)
 def maintenance_reminders():
-    hours = int(request.args.get('within_hours', 24))
+    try:
+        hours = int(request.args.get('within_hours', 24))
+    except (ValueError, TypeError):
+        return {'error': 'within_hours must be an integer'}, 400
     return {'reminders': get_due_maintenance_reminders(hours)}
 
 

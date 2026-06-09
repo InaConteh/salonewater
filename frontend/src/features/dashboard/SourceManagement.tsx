@@ -77,10 +77,18 @@ export function SourceManagement() {
   }
 
   const save = async () => {
+    const lat = parseFloat(form.latitude)
+    const lon = parseFloat(form.longitude)
+
+    if (isNaN(lat) || isNaN(lon)) {
+      showToast('Latitude and longitude must be valid numbers', 'danger')
+      return
+    }
+
     const payload = {
       name: form.name,
-      latitude: parseFloat(form.latitude),
-      longitude: parseFloat(form.longitude),
+      latitude: lat,
+      longitude: lon,
       district: form.district || undefined,
       status: form.status,
       description: form.description || undefined,

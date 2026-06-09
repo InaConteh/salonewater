@@ -40,7 +40,17 @@ def create_report(
 
     if update_source:
         source.root_cause = normalized
-        source.status = cause_to_status(normalized)
+        new_status = cause_to_status(normalized)
+
+        # Only update status if it's more severe than the current status
+        # Severity: red (3) > yellow (2) > green (1)
+        severity = {'red': 3, 'yellow': 2, 'green': 1}
+        current_sev = severity.get(source.status, 0)
+        new_sev = severity.get(new_status, 0)
+
+        if new_sev > current_sev:
+            source.status = new_status
+
         source.last_updated = datetime.utcnow()
 
     db.session.commit()

@@ -288,7 +288,6 @@ def get_well_context_endpoint(well_id: str):
             'status': well.status,
             'water_quality': 'unsafe' if (well.status or '').lower() == 'red' else 'safe',
             'last_report': well.last_updated.isoformat() if well.last_updated else None,
-            'source_type': getattr(well, 'source_type', 'Unknown')
         }
         
         # Suggested AI queries based on status

@@ -30,7 +30,11 @@ def get_kpis():
 
 @bp.route('/analytics/trends', methods=['GET'])
 def get_trends():
-    days = int(request.args.get('days', 30))
+    try:
+        days = int(request.args.get('days', 30))
+    except (ValueError, TypeError):
+        return {'error': 'days must be an integer'}, 400
+
     since = datetime.utcnow() - timedelta(days=days)
     reports = Report.query.filter(Report.timestamp >= since).all()
 

@@ -286,7 +286,7 @@ def get_well_context(well_data: Dict[str, Any]) -> Dict[str, Any]:
     Prepare context information from well data for AI queries
     
     Args:
-        well_data: Dictionary with well information
+        well_data: Dictionary with well information (from to_dict())
         
     Returns:
         Formatted context dictionary
@@ -296,10 +296,8 @@ def get_well_context(well_data: Dict[str, Any]) -> Dict[str, Any]:
         'well_name': well_data.get('name'),
         'district': well_data.get('district'),
         'status': well_data.get('status'),
-        'water_quality': well_data.get('water_quality_status'),
-        'last_report': well_data.get('last_report_date'),
-        'source_type': well_data.get('source_type'),
-        'population_served': well_data.get('population_served')
+        'water_quality': 'unsafe' if (well_data.get('status') or '').lower() == 'red' else 'safe',
+        'last_report': well_data.get('last_updated'),
     }
 
 def format_error_message(error: Exception, user_facing: bool = True) -> str:

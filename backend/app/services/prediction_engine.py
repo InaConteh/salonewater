@@ -82,9 +82,9 @@ def generate_alerts() -> list[dict]:
                 ),
             })
 
-    # Sample drought check for first source with coordinates
-    source = WaterSource.query.first()
-    if source:
+    # Sample drought check for first 10 sources with coordinates
+    sources = WaterSource.query.limit(10).all()
+    for source in sources:
         forecast = fetch_rainfall_forecast(source.latitude, source.longitude)
         if forecast and forecast.get('drought_risk'):
             alerts.append({

@@ -32,7 +32,11 @@ def get_sources_nearby():
     except (KeyError, TypeError, ValueError):
         return {'error': 'Query params lat and lon are required floats'}, 400
 
-    limit = min(int(request.args.get('limit', 3)), 10)
+    try:
+        limit = min(int(request.args.get('limit', 3)), 10)
+    except (ValueError, TypeError):
+        return {'error': 'limit must be an integer'}, 400
+
     sources = WaterSource.query.filter(WaterSource.status == 'green').all()
     ranked = sorted(sources, key=lambda s: haversine_km(lat, lon, s.latitude, s.longitude))
     nearest = ranked[:limit]
