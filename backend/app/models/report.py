@@ -21,11 +21,20 @@ class Report(db.Model):
         return f'<Report {self.id} source={self.source_id} cause={self.cause_category}>'
 
     def to_dict(self):
+        source = self.water_source
+        # Map source status (green/yellow/red) to report status (safe/warning/danger)
+        status_map = {'green': 'safe', 'yellow': 'warning', 'red': 'danger'}
+        report_status = status_map.get(source.status, 'safe') if source else 'safe'
+        
         return {
             'id': self.id,
             'source_id': self.source_id,
+            'source_name': source.name if source else None,
+            'district': source.district if source else None,
             'reporter_phone': self.reporter_phone,
             'cause_category': self.cause_category,
             'notes': self.notes,
+            'message': self.notes,  # Alias for compatibility
             'timestamp': self.timestamp.isoformat() if self.timestamp else None,
+            'status': report_status,
         }

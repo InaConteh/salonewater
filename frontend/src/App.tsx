@@ -19,6 +19,7 @@ import { SMSGuide } from '@/pages/SMSGuide'
 import { Terms } from '@/pages/Terms'
 import { AdminAlerts } from '@/pages/admin/AdminAlerts'
 import { AdminDashboard } from '@/pages/admin/AdminDashboard'
+import { AdminReports } from '@/pages/admin/AdminReports'
 import { HealthAssistant } from '@/pages/HealthAssistant'
 function App() {
   return (
@@ -44,6 +45,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/admin" element={<AdminLayout />}>
               <Route index element={<AdminDashboard />} />
+              <Route path="reports" element={<AdminReports />} />
               <Route path="sources" element={<SourceManagement />} />
               <Route path="dispatch" element={<DispatchCenter />} />
               <Route path="analytics" element={<Analytics />} />

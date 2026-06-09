@@ -7,8 +7,7 @@ import { useEffect, useState } from 'react'
 import { 
   AIQueryForm, 
   AIResponseDisplay, 
-  AIHealthStatus, 
-  StreamingResponse 
+  AIHealthStatus
 } from '@/components/ai'
 import { useAI } from '@/hooks/useAI'
 import type { AIQuery } from '@/services/aiService'
@@ -31,7 +30,6 @@ const QUICK_QUESTIONS = {
 }
 
 export function HealthAssistant() {
-  const [question, setQuestion] = useState('')
   const [language, setLanguage] = useState<'en' | 'krio'>('en')
   const { response, streaming, loading, error, ask, stream, clearState } = useAI()
 

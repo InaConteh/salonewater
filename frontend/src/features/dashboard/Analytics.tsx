@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Download, TrendingUp, BarChart3, PieChart } from 'lucide-react'
 import { apiClient, type Kpis, type Trends } from '@/services/api'
 import { KpiCards } from '@/components/common/KpiCards'
 import { ErrorState, LoadingState } from '@/components/common/LoadingState'
@@ -67,80 +68,99 @@ export function Analytics() {
   if (error) {
     return (
       <div className="page-container py-8">
-        <ErrorState message={error} />
+        <ErrorState message={error} onRetry={load} />
       </div>
     )
   }
 
   return (
     <div className="page-container space-y-8 py-8">
-      <header className="flex flex-wrap items-end justify-between gap-4">
+      {/* Header */}
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-primary">Analytics</h1>
-          <p className="text-neutral">Trends and exports</p>
+          <h1 className="text-3xl font-bold text-primary">Data & Analytics</h1>
+          <p className="text-neutral">Water security trends and statistics</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2 items-end">
           <Input
-            label="Days"
+            label="Period (days)"
             name="days"
             type="number"
             value={days}
             onChange={(e) => setDays(e.target.value)}
-            className="w-24"
+            className="w-32"
           />
-          <Button className="self-end" onClick={load}>
-            Apply
-          </Button>
+          <Button onClick={load}>Apply</Button>
         </div>
-      </header>
+      </div>
 
+      {/* KPIs */}
       <KpiCards kpis={kpis} />
 
+      {/* Main Analytics Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card title="Reports by cause">
+        {/* Reports by Cause */}
+        <Card className="space-y-4">
+          <div className="flex items-center gap-2 pb-3 border-b">
+            <BarChart3 className="h-5 w-5 text-primary" />
+            <h3 className="font-bold text-lg">Reports by Cause</h3>
+          </div>
           {trends && Object.keys(trends.by_cause).length > 0 ? (
             <ul className="space-y-3">
-              {Object.entries(trends.by_cause).map(([cause, count]) => (
-                <li key={cause}>
-                  <div className="mb-1 flex justify-between text-sm">
-                    <span className="capitalize">{cause.replace(/_/g, ' ')}</span>
-                    <span className="font-semibold">{count}</span>
-                  </div>
-                  <div className="h-3 rounded-full bg-neutral-light">
-                    <div
-                      className="h-3 rounded-full bg-primary"
-                      style={{ width: `${(count / maxCause) * 100}%` }}
-                    />
-                  </div>
-                </li>
-              ))}
+              {Object.entries(trends.by_cause)
+                .sort(([, a], [, b]) => b - a)
+                .map(([cause, count]) => (
+                  <li key={cause}>
+                    <div className="mb-2 flex justify-between items-center">
+                      <span className="font-medium text-sm">{cause.replace(/_/g, ' ')}</span>
+                      <span className="inline-block bg-primary text-white px-3 py-1 rounded-full text-xs font-bold">
+                        {count}
+                      </span>
+                    </div>
+                    <div className="h-2 rounded-full bg-bgLight overflow-hidden">
+                      <div
+                        className="h-2 bg-gradient-to-r from-primary to-primary-container rounded-full transition-all"
+                        style={{ width: `${(count / maxCause) * 100}%` }}
+                      />
+                    </div>
+                  </li>
+                ))}
             </ul>
           ) : (
-            <p className="text-sm text-neutral">No reports in this period.</p>
+            <p className="text-sm text-neutral text-center py-8">No data available.</p>
           )}
         </Card>
 
-        <Card title="Status distribution">
+        {/* Status Distribution */}
+        <Card className="space-y-4">
+          <div className="flex items-center gap-2 pb-3 border-b">
+            <PieChart className="h-5 w-5 text-primary" />
+            <h3 className="font-bold text-lg">Water Sources by Status</h3>
+          </div>
           {kpis && (
-            <ul className="space-y-4">
+            <ul className="space-y-3">
               {[
-                { label: 'Safe', count: kpis.status_green, color: 'bg-success' },
-                { label: 'Caution', count: kpis.status_yellow, color: 'bg-warning' },
-                { label: 'Unsafe', count: kpis.status_red, color: 'bg-danger' },
+                { label: 'Safe', count: kpis.status_green, color: 'bg-safe-green', icon: '🟢' },
+                { label: 'Caution', count: kpis.status_yellow, color: 'bg-caution-yellow', icon: '🟡' },
+                { label: 'Unsafe', count: kpis.status_red, color: 'bg-danger', icon: '🔴' },
               ].map((row) => (
                 <li key={row.label}>
-                  <div className="mb-1 flex justify-between text-sm">
-                    <span>{row.label}</span>
-                    <span>{row.count}</span>
+                  <div className="mb-2 flex justify-between items-center">
+                    <span className="font-medium text-sm">
+                      {row.icon} {row.label}
+                    </span>
+                    <span className="text-sm font-semibold">
+                      {row.count} / {kpis.total_sources} ({
+                        kpis.total_sources ? ((row.count / kpis.total_sources) * 100).toFixed(1) : 0
+                      }%)
+                    </span>
                   </div>
-                  <div className="h-3 rounded-full bg-neutral-light">
+                  <div className="h-3 rounded-full bg-bgLight overflow-hidden">
                     <div
-                      className={`h-3 rounded-full ${row.color}`}
+                      className={`h-3 rounded-full ${row.color} transition-all`}
                       style={{
                         width: `${
-                          kpis.total_sources
-                            ? (row.count / kpis.total_sources) * 100
-                            : 0
+                          kpis.total_sources ? (row.count / kpis.total_sources) * 100 : 0
                         }%`,
                       }}
                     />
@@ -152,14 +172,61 @@ export function Analytics() {
         </Card>
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        <Button variant="outline" onClick={exportCsv}>
-          Export CSV
-        </Button>
-        <Button variant="outline" onClick={exportJson}>
-          Export JSON
-        </Button>
-      </div>
+      {/* High-Risk Sources */}
+      {trends?.risk_sources && trends.risk_sources.length > 0 && (
+        <Card className="space-y-4">
+          <div className="flex items-center gap-2 pb-3 border-b">
+            <TrendingUp className="h-5 w-5 text-danger" />
+            <h3 className="font-bold text-lg">High-Risk Water Sources (Last {days} days)</h3>
+          </div>
+          <div className="space-y-2 max-h-[400px] overflow-y-auto">
+            {trends.risk_sources.slice(0, 10).map((source) => (
+              <div
+                key={source.source_id}
+                className="flex items-center justify-between border border-outline rounded-lg p-3 hover:bg-bgLight transition"
+              >
+                <div className="flex-1">
+                  <p className="font-semibold text-primary">{source.source_name}</p>
+                  <p className="text-xs text-neutral">{source.report_count_30d} reports in 30 days</p>
+                </div>
+                <div className="text-right">
+                  <div className="inline-block px-3 py-1 rounded-lg text-sm font-bold bg-danger/10 text-danger">
+                    {source.risk_level === 'high' ? '🔴 High' : '🟡 Medium'}
+                  </div>
+                  {source.suggested_action && (
+                    <p className="text-xs text-neutral mt-1">{source.suggested_action}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* Export Section */}
+      <Card className="space-y-4">
+        <h3 className="font-bold text-lg">Export Data</h3>
+        <p className="text-sm text-neutral">
+          Download trends and statistics for external analysis or reporting.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            onClick={exportCsv}
+            className="flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
+          <Button
+            onClick={exportJson}
+            variant="secondary"
+            className="flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Export JSON
+          </Button>
+        </div>
+      </Card>
     </div>
   )
 }

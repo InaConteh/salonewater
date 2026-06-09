@@ -35,10 +35,14 @@ export interface Tip {
 export interface Report {
   id: string
   source_id: string
+  source_name?: string
   reporter_phone?: string | null
   cause_category: string
   notes?: string | null
+  message?: string | null
   timestamp?: string | null
+  status?: string
+  district?: string
 }
 
 export interface RepairCase {
