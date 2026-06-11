@@ -5,6 +5,7 @@ import { apiClient } from '@/services/api'
 import type { WaterSource } from '@/types'
 import { Input, Select } from '@/components/ui'
 import { ErrorState, LoadingState } from '@/components/common/LoadingState'
+import { ReportModal } from '@/components/common/ReportModal'
 
 export function MapPage() {
   const [searchParams] = useSearchParams()
@@ -13,6 +14,8 @@ export function MapPage() {
   const [error, setError] = useState<string | null>(null)
   const [district, setDistrict] = useState('')
   const [search, setSearch] = useState(searchParams.get('search') ?? '')
+
+  const [reportingSource, setReportingSource] = useState<WaterSource | null>(null)
 
   useEffect(() => {
     apiClient
@@ -69,6 +72,17 @@ export function MapPage() {
         sources={sources}
         districtFilter={district || undefined}
         searchQuery={search}
+        onReportIssue={setReportingSource}
+      />
+
+      <ReportModal
+        open={!!reportingSource}
+        source={reportingSource}
+        onClose={() => setReportingSource(null)}
+        onSuccess={() => {
+          // Optionally refresh sources to show updated status
+          apiClient.getSources().then((res) => setSources(res.data.sources))
+        }}
       />
       <p className="text-sm text-neutral">
         Showing {sources.filter((s) => {
