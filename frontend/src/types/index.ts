@@ -1,5 +1,7 @@
 export type WaterStatus = 'green' | 'yellow' | 'red'
 
+export type BadgeVariant = WaterStatus | 'neutral' | 'info' | 'primary' | 'warning' | 'danger' | 'safe'
+
 export interface WaterSource {
   id: string
   name: string
@@ -12,7 +14,7 @@ export interface WaterSource {
   last_updated?: string | null
 }
 
-export type ButtonVariant = 'primary' | 'success' | 'warning' | 'danger' | 'outline' | 'ghost'
+export type ButtonVariant = 'primary' | 'success' | 'warning' | 'danger' | 'outline' | 'ghost' | 'secondary'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 
 export type AlertVariant = 'info' | 'success' | 'warning' | 'danger'

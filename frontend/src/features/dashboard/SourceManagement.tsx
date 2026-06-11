@@ -85,6 +85,11 @@ export function SourceManagement() {
       return
     }
 
+    if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+      showToast('Invalid coordinates range', 'danger')
+      return
+    }
+
     const payload = {
       name: form.name,
       latitude: lat,

@@ -7,10 +7,24 @@ export function LoadingState({ label = 'Loading…' }: { label?: string }) {
   )
 }
 
-export function ErrorState({ message }: { message: string }) {
+export function ErrorState({
+  message,
+  onRetry,
+}: {
+  message: string
+  onRetry?: () => void
+}) {
   return (
-    <div className="rounded-lg border-2 border-danger/30 bg-danger-light px-4 py-6 text-center text-danger-dark">
-      {message}
+    <div className="rounded-lg border-2 border-danger/30 bg-danger-light px-4 py-6 text-center">
+      <p className="text-danger-dark">{message}</p>
+      {onRetry && (
+        <button
+          onClick={onRetry}
+          className="mt-3 text-sm font-semibold text-danger hover:underline"
+        >
+          Try again
+        </button>
+      )}
     </div>
   )
 }

@@ -18,7 +18,7 @@ export function AdminReports() {
   const [causeFilter, setCauseFilter] = useState('')
   const [districtFilter, setDistrictFilter] = useState('')
   const [sortBy, setSortBy] = useState('timestamp-desc')
-  const [viewMode, setViewMode] = useState<'table' | 'card'>('card')
+  const viewMode = 'card'
 
   // Pagination
   const [page, setPage] = useState(1)
@@ -230,7 +230,7 @@ export function AdminReports() {
                 { value: '', label: 'All statuses' },
                 ...uniqueStatuses.map((s) => ({
                   value: s || '',
-                  label: getStatusLabel(s),
+            label: getStatusLabel(s || ''),
                 })),
               ]}
             />
@@ -331,7 +331,7 @@ export function AdminReports() {
                 <tr key={report.id} className="hover:bg-bgLight">
                   <td className="px-4 py-3 font-medium">{report.source_name || report.source_id}</td>
                   <td className="px-4 py-3">
-                    <Badge variant={report.status as any}>{getStatusLabel(report.status)}</Badge>
+                    <Badge variant={report.status as any}>{getStatusLabel(report.status || '')}</Badge>
                   </td>
                   <td className="px-4 py-3 text-neutral">{report.cause_category?.replace(/_/g, ' ')}</td>
                   <td className="px-4 py-3 text-neutral">{report.district}</td>
@@ -387,7 +387,7 @@ function ReportCard({ report }: { report: Report }) {
           <p className="font-semibold text-primary">{report.source_name || report.source_id}</p>
           <p className="text-xs text-neutral">{report.source_id?.slice(0, 8)}…</p>
         </div>
-        <Badge variant={report.status as any}>{getStatusLabel(report.status)}</Badge>
+        <Badge variant={report.status as any}>{getStatusLabel(report.status || '')}</Badge>
       </div>
 
       <div className="space-y-1 text-sm">

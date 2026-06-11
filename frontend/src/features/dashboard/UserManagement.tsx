@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Shield, Lock, Users, AlertCircle } from 'lucide-react'
-import { Card, Badge, Button, Alert } from '@/components/ui'
+import { Card, Badge, Alert } from '@/components/ui'
 
 interface Role {
   id: string

@@ -31,7 +31,7 @@ const QUICK_QUESTIONS = {
 
 export function HealthAssistant() {
   const [language, setLanguage] = useState<'en' | 'krio'>('en')
-  const { response, streaming, loading, error, ask, stream, clearState } = useAI()
+  const { response, streaming, loading, error, stream, clearState } = useAI()
 
   // Check if AI is available on mount
   useEffect(() => {
@@ -48,10 +48,6 @@ export function HealthAssistant() {
 
   const handleCustomQuestion = (query: AIQuery) => {
     stream(query)
-  }
-
-  const getCurrentQuestions = () => {
-    return QUICK_QUESTIONS[language] || QUICK_QUESTIONS.en
   }
 
   return (
