@@ -14,9 +14,16 @@ def login():
     if not username or not password:
         return jsonify({'error': 'username and password required'}), 400
 
-    role = authenticate_user(username, password)
-    if not role:
+    user = authenticate_user(username, password)
+    if not user:
         return jsonify({'error': 'Invalid credentials'}), 401
 
-    token = create_access_token(identity=username, additional_claims={'role': role})
-    return jsonify({'access_token': token, 'role': role}), 200
+    role_name = user.role.name if user.role else 'user'
+    token = create_access_token(
+        identity=user.id,
+        additional_claims={
+            'role': role_name,
+            'district_scope': user.district_scope
+        }
+    )
+    return jsonify({'access_token': token, 'role': role_name}), 200

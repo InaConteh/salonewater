@@ -10,13 +10,43 @@ os.environ.setdefault('FLASK_ENV', 'development')
 os.environ.setdefault('DATABASE_URL', f"sqlite:///{DEFAULT_SQLITE_DB.as_posix()}")
 
 from app import create_app, db
-from app.models import WaterSource, Report, MaintenanceLog, RepairCase
+from app.models import WaterSource, Report, MaintenanceLog, RepairCase, User, Role
 
 
 def seed_database():
     app = create_app('development')
 
     with app.app_context():
+        # Seed Roles
+        admin_role = Role.query.filter_by(name='admin').first()
+        if not admin_role:
+            admin_role = Role(name='admin', permissions='all')
+            db.session.add(admin_role)
+
+        tech_role = Role.query.filter_by(name='technician').first()
+        if not tech_role:
+            tech_role = Role(name='technician', permissions='repair')
+            db.session.add(tech_role)
+
+        committee_role = Role.query.filter_by(name='committee').first()
+        if not committee_role:
+            committee_role = Role(name='committee', permissions='read')
+            db.session.add(committee_role)
+
+        db.session.commit()
+
+        # Seed Admin User
+        admin_user = User.query.filter_by(username='admin').first()
+        if not admin_user:
+            admin_user = User(
+                username='admin',
+                email='admin@cleanflow.sl',
+                role_id=admin_role.id
+            )
+            admin_user.set_password('admin123')
+            db.session.add(admin_user)
+            db.session.commit()
+
         existing_sources = WaterSource.query.count()
         if existing_sources > 0:
             print(f'Seeding skipped: {existing_sources} water source(s) already exist.')

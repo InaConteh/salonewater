@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required
 from app.api import bp
 from app import db
 from app.models import Report, WaterSource
-from app.utils.auth import ROLE_ADMIN, roles_required
+from app.utils.auth import ROLE_ADMIN, roles_required, audit_log
 from app.utils.helpers import haversine_km, sources_to_geojson
 from app.utils.validators import validate_status
 
@@ -77,6 +77,7 @@ def get_source_reports(source_id):
 @bp.route('/sources', methods=['POST'])
 @jwt_required()
 @roles_required(ROLE_ADMIN)
+@audit_log('CREATE', 'WaterSource')
 def create_source():
     data = request.get_json() or {}
     payload = _parse_source_payload(data)
