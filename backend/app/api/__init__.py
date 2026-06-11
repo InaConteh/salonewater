@@ -46,4 +46,5 @@ from app.api import (
     sources,
     tips,
     ai_enhanced,
+    users,
 )
