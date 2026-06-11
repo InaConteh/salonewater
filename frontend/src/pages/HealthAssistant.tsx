@@ -4,11 +4,15 @@
  */
 
 import { useEffect, useState } from 'react'
-import { 
-  AIQueryForm, 
-  AIResponseDisplay, 
-  AIHealthStatus
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+
+import {
+  AIQueryForm,
+  AIResponseDisplay,
+  AIHealthStatus,
 } from '@/components/ai'
+
 import { useAI } from '@/hooks/useAI'
 import type { AIQuery } from '@/services/aiService'
 
@@ -31,9 +35,16 @@ const QUICK_QUESTIONS = {
 
 export function HealthAssistant() {
   const [language, setLanguage] = useState<'en' | 'krio'>('en')
-  const { response, streaming, loading, error, ask, stream, clearState } = useAI()
 
-  // Check if AI is available on mount
+  const {
+    response,
+    streaming,
+    loading,
+    error,
+    stream,
+    clearState,
+  } = useAI()
+
   useEffect(() => {
     // AI health check happens automatically in the component
   }, [])
@@ -50,20 +61,19 @@ export function HealthAssistant() {
     stream(query)
   }
 
-  const getCurrentQuestions = () => {
-    return QUICK_QUESTIONS[language] || QUICK_QUESTIONS.en
-  }
-
   return (
     <div className="page-container space-y-8 py-8">
       {/* Header */}
       <header className="space-y-4">
-        <h1 className="text-4xl font-bold">💧 Health Assistant</h1>
+        <h1 className="text-4xl font-bold">
+          💧 Health Assistant
+        </h1>
+
         <p className="text-lg text-gray-600">
-          Ask about water safety, sanitation, disease prevention, and healthy water practices.
+          Ask about water safety, sanitation, disease prevention,
+          and healthy water practices.
         </p>
 
-        {/* AI Status */}
         <div>
           <AIHealthStatus />
         </div>
@@ -71,7 +81,10 @@ export function HealthAssistant() {
 
       {/* Language Toggle */}
       <div className="flex items-center gap-4">
-        <span className="text-sm font-medium text-gray-700">Language:</span>
+        <span className="text-sm font-medium text-gray-700">
+          Language:
+        </span>
+
         <div className="flex gap-2">
           {(['en', 'krio'] as const).map((lang) => (
             <button
@@ -91,7 +104,10 @@ export function HealthAssistant() {
 
       {/* Quick Questions */}
       <div className="space-y-3">
-        <h2 className="text-lg font-semibold">Quick Questions</h2>
+        <h2 className="text-lg font-semibold">
+          Quick Questions
+        </h2>
+
         <div className="grid gap-2">
           {QUICK_QUESTIONS[language].map((q, idx) => (
             <button
@@ -108,7 +124,10 @@ export function HealthAssistant() {
 
       {/* Ask Custom Question */}
       <div className="space-y-4 bg-gray-50 p-6 rounded-lg">
-        <h2 className="text-lg font-semibold">Ask a Custom Question</h2>
+        <h2 className="text-lg font-semibold">
+          Ask a Custom Question
+        </h2>
+
         <AIQueryForm
           onSubmit={handleCustomQuestion}
           isLoading={loading}
@@ -125,33 +144,51 @@ export function HealthAssistant() {
       {/* Response Area */}
       {(loading || streaming || response || error) && (
         <div className="space-y-4">
+
           {loading && streaming === '' && (
             <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-              <p className="text-sm text-blue-600 font-medium">🤖 Thinking...</p>
+              <p className="text-sm text-blue-600 font-medium">
+                🤖 Thinking...
+              </p>
             </div>
           )}
 
+          {/* Streaming Markdown Response */}
           {streaming && (
             <div className="space-y-3">
-              <div className="text-sm font-medium text-gray-700">AI Response:</div>
-              <div className="bg-white border border-gray-200 p-4 rounded-lg">
-                <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">{streaming}</p>
+              <div className="text-sm font-medium text-gray-700">
+                AI Response:
+              </div>
+
+              <div className="bg-white border border-gray-200 p-4 rounded-lg overflow-x-auto">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  className="prose prose-sm max-w-none"
+                >
+                  {streaming}
+                </ReactMarkdown>
               </div>
             </div>
           )}
 
+          {/* Final Response */}
           {response && !loading && (
             <div className="space-y-3">
-              <div className="text-sm font-medium text-gray-700">Answer:</div>
+              <div className="text-sm font-medium text-gray-700">
+                Answer:
+              </div>
+
               <AIResponseDisplay response={response} />
             </div>
           )}
 
+          {/* Error */}
           {error && (
             <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
               <p className="text-sm text-red-600">
                 <strong>Error:</strong> {error}
               </p>
+
               <button
                 onClick={clearState}
                 className="mt-2 text-xs text-red-600 hover:text-red-700 underline"
@@ -163,34 +200,50 @@ export function HealthAssistant() {
         </div>
       )}
 
-      {/* Important Disclaimer */}
+      {/* Disclaimer */}
       <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
         <p className="text-sm text-yellow-800">
-          <strong>⚠️ Important:</strong> This AI provides general health information, not medical
-          diagnosis. If you have serious symptoms or health concerns, please consult a qualified
-          health worker or doctor immediately.
+          <strong>⚠️ Important:</strong> This AI provides
+          general health information, not medical diagnosis.
+          If you have serious symptoms or health concerns,
+          please consult a qualified health worker or doctor
+          immediately.
         </p>
       </div>
 
-      {/* Helpful Resources */}
+      {/* Resources */}
       <div className="bg-white border border-gray-200 p-6 rounded-lg space-y-3">
-        <h3 className="font-semibold">Additional Resources</h3>
+        <h3 className="font-semibold">
+          Additional Resources
+        </h3>
+
         <ul className="space-y-2 text-sm text-gray-700">
           <li>
             📚{' '}
-            <a href="/health" className="text-blue-500 hover:underline">
+            <a
+              href="/health"
+              className="text-blue-500 hover:underline"
+            >
               Health Library - Browse pre-written health tips
             </a>
           </li>
+
           <li>
             🗺️{' '}
-            <a href="/map" className="text-blue-500 hover:underline">
+            <a
+              href="/map"
+              className="text-blue-500 hover:underline"
+            >
               Water Source Map - Find safe water near you
             </a>
           </li>
+
           <li>
             📋{' '}
-            <a href="/maintenance" className="text-blue-500 hover:underline">
+            <a
+              href="/maintenance"
+              className="text-blue-500 hover:underline"
+            >
               Maintenance Guide - Learn how to maintain wells
             </a>
           </li>
