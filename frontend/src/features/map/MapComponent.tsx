@@ -10,6 +10,7 @@ interface MapComponentProps {
   sources: WaterSource[]
   districtFilter?: string
   searchQuery?: string
+  onReportIssue?: (source: WaterSource) => void
 }
 
 function FlyToSearch({
@@ -44,6 +45,7 @@ export function MapComponent({
   sources,
   districtFilter,
   searchQuery,
+  onReportIssue,
 }: MapComponentProps) {
   const filtered = useMemo(() => {
     let list = sources
@@ -111,11 +113,21 @@ export function MapComponent({
                   )}
                 </div>
               )}
-              <Link to={`/find-water?lat=${source.latitude}&lon=${source.longitude}`}>
-                <Button size="sm" variant="outline" className="mt-2 w-full">
-                  Find alternatives
+              <div className="flex flex-col gap-2 pt-2">
+                <Button
+                  size="sm"
+                  variant="primary"
+                  className="w-full"
+                  onClick={() => onReportIssue?.(source)}
+                >
+                  Report an issue
                 </Button>
-              </Link>
+                <Link to={`/find-water?lat=${source.latitude}&lon=${source.longitude}`} className="w-full">
+                  <Button size="sm" variant="outline" className="w-full">
+                    Find alternatives
+                  </Button>
+                </Link>
+              </div>
             </div>
           </Popup>
         </Marker>
