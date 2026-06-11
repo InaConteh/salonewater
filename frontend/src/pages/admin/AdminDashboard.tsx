@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AlertCircle, TrendingDown, TrendingUp, Activity, CheckCircle, Clock } from 'lucide-react'
+import { AlertCircle, Activity, CheckCircle, Clock } from 'lucide-react'
 import { KpiCards } from '@/components/common/KpiCards'
 import { ErrorState, LoadingState } from '@/components/common/LoadingState'
-import { Alert, Badge, Button, Card, Select } from '@/components/ui'
+import { Alert, Badge, Button, Card } from '@/components/ui'
 import { apiClient, type Kpis, type Report, type Trends } from '@/services/api'
 import { formatDate, getStatusColor, getStatusLabel } from '@/lib/status'
 
@@ -11,7 +11,6 @@ export function AdminDashboard() {
   const [kpis, setKpis] = useState<Kpis | null>(null)
   const [reports, setReports] = useState<Report[]>([])
   const [trends, setTrends] = useState<Trends | null>(null)
-  const [district, setDistrict] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [autoRefresh, setAutoRefresh] = useState(true)
@@ -132,13 +131,13 @@ export function AdminDashboard() {
               <p className="text-sm text-neutral py-6">No reports yet.</p>
             ) : (
               <div className="space-y-3 max-h-[500px] overflow-y-auto">
-                {recentReports.map((r, idx) => (
+                {recentReports.map((r) => (
                   <div
                     key={r.id}
                     className="flex gap-3 pb-3 border-b last:border-b-0 hover:bg-bgLight p-2 -mx-2 px-2 rounded transition"
                   >
                     {/* Status Indicator */}
-                    <div className={`h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0 ${getStatusColor(r.status)}`}>
+                    <div className={`h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0`} style={{ backgroundColor: getStatusColor(r.status || '') }}>
                       {r.status === 'danger' ? (
                         <AlertCircle className="h-5 w-5 text-white" />
                       ) : r.status === 'warning' ? (
@@ -160,7 +159,7 @@ export function AdminDashboard() {
                           </p>
                         </div>
                         <Badge variant={r.status as any} className="flex-shrink-0">
-                          {getStatusLabel(r.status)}
+                          {getStatusLabel(r.status || '')}
                         </Badge>
                       </div>
                       {r.message && (

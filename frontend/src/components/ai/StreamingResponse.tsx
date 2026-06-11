@@ -13,7 +13,6 @@ interface StreamingResponseProps {
 }
 
 export function StreamingResponse({ query, onComplete }: StreamingResponseProps) {
-  const { streamResponse } = useAI()
   const [text, setText] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

@@ -27,7 +27,6 @@ interface CaseWithReport extends RepairCase {
 export function DispatchCenter() {
   const { showToast } = useToast()
   const [cases, setCases] = useState<CaseWithReport[]>([])
-  const [reports, setReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [editCase, setEditCase] = useState<CaseWithReport | null>(null)
@@ -52,7 +51,6 @@ export function DispatchCenter() {
       }))
       
       setCases(enrichedCases)
-      setReports(reportsRes.data.reports)
       setError(null)
     } catch {
       setError('Failed to load dispatch data.')
@@ -126,20 +124,20 @@ export function DispatchCenter() {
         </div>
         <div className="flex gap-2">
           <Button
-            variant={viewMode === 'kanban' ? 'primary' : 'secondary'}
+            variant={viewMode === 'kanban' ? 'primary' : 'outline'}
             size="sm"
             onClick={() => setViewMode('kanban')}
           >
             📊 Kanban
           </Button>
           <Button
-            variant={viewMode === 'list' ? 'primary' : 'secondary'}
+            variant={viewMode === 'list' ? 'primary' : 'outline'}
             size="sm"
             onClick={() => setViewMode('list')}
           >
             📋 List
           </Button>
-          <Button variant="secondary" size="sm" onClick={load}>
+          <Button variant="outline" size="sm" onClick={load}>
             Refresh
           </Button>
         </div>
@@ -338,7 +336,7 @@ export function DispatchCenter() {
             </div>
 
             <div className="flex gap-2 justify-end pt-4 border-t">
-              <Button variant="secondary" onClick={() => setSelectedCase(null)}>
+              <Button variant="outline" onClick={() => setSelectedCase(null)}>
                 Cancel
               </Button>
               <Button variant="primary" onClick={save}>
@@ -410,7 +408,7 @@ function DispatchCard({
         )}
 
         <Button
-          variant="secondary"
+          variant="outline"
           size="sm"
           className="w-full mt-2"
           onClick={(e) => {

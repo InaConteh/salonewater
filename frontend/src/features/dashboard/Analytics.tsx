@@ -219,7 +219,7 @@ export function Analytics() {
           </Button>
           <Button
             onClick={exportJson}
-            variant="secondary"
+            variant="outline"
             className="flex items-center gap-2"
           >
             <Download className="h-4 w-4" />

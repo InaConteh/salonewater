@@ -4,6 +4,7 @@ import type { ButtonSize, ButtonVariant } from '@/types'
 
 const variantClass: Record<ButtonVariant, string> = {
   primary: 'bg-primary text-white hover:bg-primary-dark focus-visible:ring-primary',
+  secondary: 'bg-neutral text-white hover:bg-neutral-dark focus-visible:ring-neutral',
   success: 'bg-success text-white hover:bg-success-dark focus-visible:ring-success',
   warning: 'bg-warning text-body hover:bg-warning-dark focus-visible:ring-warning',
   danger: 'bg-danger text-white hover:bg-danger-dark focus-visible:ring-danger',

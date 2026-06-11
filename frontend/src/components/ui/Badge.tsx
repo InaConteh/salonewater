@@ -3,7 +3,7 @@ import { cn } from '@/lib/cn'
 import { STATUS_BADGE_CLASS, STATUS_LABELS } from '@/lib/status'
 import type { WaterStatus } from '@/types'
 
-export type BadgeVariant = WaterStatus | 'neutral' | 'info'
+export type BadgeVariant = WaterStatus | 'neutral' | 'info' | 'primary' | 'warning' | 'danger' | 'safe'
 
 const neutralClass = 'bg-neutral-light text-neutral-dark border-neutral/30'
 const infoClass = 'bg-primary-light text-primary border-primary/30'
@@ -21,7 +21,7 @@ export function Badge({
   className,
   ...props
 }: BadgeProps) {
-  const resolved = status ?? (variant as WaterStatus | undefined)
+  const resolved = status ?? (['green', 'yellow', 'red'].includes(variant as string) ? (variant as WaterStatus) : undefined)
   const label =
     children ??
     (resolved && resolved in STATUS_LABELS
@@ -35,7 +35,15 @@ export function Badge({
       ? STATUS_BADGE_CLASS[resolved as WaterStatus]
       : variant === 'info'
         ? infoClass
-        : neutralClass
+        : variant === 'primary'
+          ? 'bg-primary/20 text-primary border-primary/30'
+          : variant === 'warning'
+            ? 'bg-warning/30 text-[#856404] border-warning/30'
+            : variant === 'danger'
+              ? 'bg-danger/20 text-danger border-danger/30'
+              : variant === 'safe'
+                ? 'bg-success/20 text-success border-success/30'
+                : neutralClass
 
   return (
     <span

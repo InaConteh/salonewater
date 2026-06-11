@@ -35,15 +35,7 @@ const QUICK_QUESTIONS = {
 
 export function HealthAssistant() {
   const [language, setLanguage] = useState<'en' | 'krio'>('en')
-
-  const {
-    response,
-    streaming,
-    loading,
-    error,
-    stream,
-    clearState,
-  } = useAI()
+  const { response, streaming, loading, error, ask, stream, clearState } = useAI()
 
   useEffect(() => {
     // AI health check happens automatically in the component
