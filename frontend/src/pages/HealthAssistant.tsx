@@ -161,12 +161,14 @@ export function HealthAssistant() {
               </div>
 
               <div className="bg-white border border-gray-200 p-4 rounded-lg overflow-x-auto">
+                <div className="prose prose-sm max-w-none">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
-                  className="prose prose-sm max-w-none"
+                  
                 >
                   {streaming}
                 </ReactMarkdown>
+                </div>
               </div>
             </div>
           )}
