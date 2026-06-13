@@ -77,15 +77,43 @@ def seed_database():
         db.session.add_all([source_a, source_b])
         db.session.flush()
 
-        report = Report(
-            source_id=source_a.id,
-            reporter_phone='+23277212345',
-            cause_category='pump_failure',
-            notes='The pump rattles and delivers less water than yesterday.',
-            timestamp=datetime.utcnow() - timedelta(hours=2)
-        )
+        # Create multiple reports for better alert generation
+        reports_data = [
+            {
+                'source_id': source_a.id,
+                'reporter_phone': '+23277212345',
+                'cause_category': 'pump_failure',
+                'notes': 'The pump rattles and delivers less water than yesterday.',
+                'timestamp': datetime.utcnow() - timedelta(hours=2)
+            },
+            {
+                'source_id': source_a.id,
+                'reporter_phone': '+23276543210',
+                'cause_category': 'low_flow',
+                'notes': 'Water pressure is very low this morning.',
+                'timestamp': datetime.utcnow() - timedelta(days=2)
+            },
+            {
+                'source_id': source_a.id,
+                'reporter_phone': '+23278901234',
+                'cause_category': 'contamination',
+                'notes': 'Water has unusual color and smell.',
+                'timestamp': datetime.utcnow() - timedelta(days=5)
+            },
+            {
+                'source_id': source_b.id,
+                'reporter_phone': '+23279876543',
+                'cause_category': 'maintenance_due',
+                'notes': 'Pump needs regular maintenance check.',
+                'timestamp': datetime.utcnow() - timedelta(days=7)
+            },
+        ]
 
-        db.session.add(report)
+        reports = []
+        for report_data in reports_data:
+            report = Report(**report_data)
+            db.session.add(report)
+            reports.append(report)
         db.session.flush()
 
         maintenance = MaintenanceLog(
@@ -99,7 +127,7 @@ def seed_database():
         )
 
         repair_case = RepairCase(
-            report_id=report.id,
+            report_id=reports[0].id,
             assigned_team='Western Response Unit',
             eta=datetime.utcnow() + timedelta(hours=6),
             status='open',

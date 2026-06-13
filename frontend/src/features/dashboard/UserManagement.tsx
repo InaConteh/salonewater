@@ -111,7 +111,7 @@ export function UserManagement() {
       {/* Info Alert */}
       <Alert variant="info">
         <Shield className="h-4 w-4 inline mr-2" />
-        User accounts are currently configured via backend environment variables. Database-backed user management will be available in Phase 6+.
+        User accounts are currently configured via backend environment variables. Database-backed user management features will be available in future releases.
       </Alert>
 
       {/* Roles Grid */}
@@ -226,21 +226,7 @@ export function UserManagement() {
         </div>
       )}
 
-      {/* Future Development */}
-      <Card className="border-l-4 border-caution-yellow space-y-3">
-        <h3 className="font-bold text-lg">🔄 Phase 6+ Enhancement</h3>
-        <p className="text-sm text-neutral">
-          The following features will be available in future releases:
-        </p>
-        <ul className="space-y-2 text-sm text-neutral list-disc list-inside">
-          <li>Database-backed user accounts with full CRUD</li>
-          <li>Custom role creation and permission assignment</li>
-          <li>Multi-district user scoping</li>
-          <li>Session management and active user tracking</li>
-          <li>Password reset and 2FA authentication</li>
-          <li>Audit logs for all admin actions</li>
-        </ul>
-      </Card>
+
     </div>
   )
 }

@@ -13,20 +13,22 @@ def _reports_last_days(days: int = 30) -> list[Report]:
 
 
 def analyze_source_risk() -> list[dict]:
-    """Flag sources with elevated report frequency."""
+    """Flag sources with elevated report frequency or critical status."""
     reports = _reports_last_days(30)
     counts: dict[str, int] = {}
     for report in reports:
         counts[report.source_id] = counts.get(report.source_id, 0) + 1
 
     risks = []
+    
+    # Check for sources with multiple reports (pattern detection)
     for source_id, count in counts.items():
-        if count < 2:
+        if count < 1:  # Lower threshold to 1 to catch any reported issue
             continue
         source = WaterSource.query.get(source_id)
         if not source:
             continue
-        level = 'high' if count >= 4 else 'medium'
+        level = 'high' if count >= 3 else 'medium'
         risks.append({
             'source_id': source_id,
             'source_name': source.name,
@@ -34,6 +36,20 @@ def analyze_source_risk() -> list[dict]:
             'risk_level': level,
             'suggested_action': 'Schedule inspection' if level == 'medium' else 'Urgent dispatch',
         })
+    
+    # Also check for sources with red/yellow status
+    for source in WaterSource.query.all():
+        if source.id in counts:
+            continue  # Already in risks
+        if source.status in ['red', 'yellow']:
+            risks.append({
+                'source_id': source.id,
+                'source_name': source.name,
+                'report_count_30d': 0,
+                'risk_level': 'high' if source.status == 'red' else 'medium',
+                'suggested_action': 'Check infrastructure' if source.status == 'yellow' else 'Urgent inspection needed',
+            })
+    
     return sorted(risks, key=lambda r: r['report_count_30d'], reverse=True)
 
 
@@ -67,32 +83,48 @@ def fetch_rainfall_forecast(latitude: float, longitude: float) -> dict | None:
 
 def generate_alerts() -> list[dict]:
     """
-    Build alert payloads for drought/contamination risk.
-    Does not send SMS; callers use at_client.send_sms.
+    Build alert payloads for contamination risk, source failures, and drought.
+    Returns actionable alerts based on report patterns and source status.
     """
     alerts = []
-    for risk in analyze_source_risk():
+    
+    # Generate alerts from risk analysis
+    risks = analyze_source_risk()
+    for risk in risks:
         if risk['risk_level'] == 'high':
+            if risk['report_count_30d'] > 0:
+                alerts.append({
+                    'type': 'contamination_or_failure',
+                    'source_id': risk['source_id'],
+                    'message': (
+                        f"{risk['source_name']}: {risk['report_count_30d']} "
+                        f"report(s) in 30 days indicating potential water quality or infrastructure issue."
+                    ),
+                })
+            else:
+                # Status-based alert
+                alerts.append({
+                    'type': 'infrastructure_failure',
+                    'source_id': risk['source_id'],
+                    'message': f"{risk['source_name']} is showing critical status and requires immediate attention.",
+                })
+        elif risk['risk_level'] == 'medium':
             alerts.append({
-                'type': 'contamination_or_failure',
+                'type': 'contamination_warning',
                 'source_id': risk['source_id'],
-                'message': (
-                    f"⚠️ {risk['source_name']}: {risk['report_count_30d']} "
-                    f"reports in 30 days. Check water safety."
-                ),
+                'message': f"{risk['source_name']} requires routine maintenance or monitoring.",
             })
 
-    # Sample drought check for first 10 sources with coordinates
-    sources = WaterSource.query.limit(10).all()
+    # Sample drought/rainfall check for sources with coordinates
+    sources = WaterSource.query.limit(5).all()
     for source in sources:
-        forecast = fetch_rainfall_forecast(source.latitude, source.longitude)
-        if forecast and forecast.get('drought_risk'):
-            alerts.append({
-                'type': 'drought',
-                'source_id': source.id,
-                'message': (
-                    f"⚠️ Low rainfall forecast near {source.name}. "
-                    "Conserve water and monitor sources."
-                ),
-            })
+        if source.status == 'red':  # Only for critical sources
+            forecast = fetch_rainfall_forecast(source.latitude, source.longitude)
+            if forecast and forecast.get('drought_risk'):
+                alerts.append({
+                    'type': 'drought_risk',
+                    'source_id': source.id,
+                    'message': f"Low rainfall forecast for {source.name}. Monitor water availability closely.",
+                })
+    
     return alerts

@@ -76,9 +76,7 @@ export function AdminLogin() {
             {loading ? 'Signing in…' : 'Sign in'}
           </Button>
         </form>
-        <p className="mt-4 text-center text-xs text-neutral">
-          Demo: admin / admin123 · tech / tech123 · committee / committee123
-        </p>
+        
         <p className="mt-2 text-center text-sm">
           <Link to="/" className="text-primary hover:underline">
             ← Back to public site

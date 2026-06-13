@@ -27,32 +27,56 @@ export function AdminAlerts() {
 
   return (
     <div className="page-container space-y-6 py-8">
-      <h1 className="text-2xl font-bold text-primary">Alerts & warnings</h1>
-      {trends?.alerts?.length ? (
-        <ul className="space-y-3">
+      <div>
+        <h1 className="text-3xl font-bold text-primary">Alerts & Warnings</h1>
+        <p className="text-neutral">Predictive alerts from the risk analysis engine</p>
+      </div>
+
+      {trends?.alerts && trends.alerts.length > 0 ? (
+        <div className="space-y-3">
           {trends.alerts.map((a, i) => (
-            <li key={i}>
-              <Alert variant="warning" title={a.type.replace(/_/g, ' ')}>
-                {a.message}
-              </Alert>
-            </li>
+            <Alert
+              key={i}
+              variant={
+                a.type === 'contamination_or_failure'
+                  ? 'danger'
+                  : a.type === 'drought_risk'
+                    ? 'warning'
+                    : 'warning'
+              }
+              title={a.type.replace(/_/g, ' ').toUpperCase()}
+            >
+              {a.message}
+            </Alert>
           ))}
-        </ul>
+        </div>
       ) : (
-        <Card>
-          <p className="text-neutral">No active alerts from the prediction engine.</p>
+        <Card className="py-12 text-center">
+          <p className="text-lg text-neutral mb-2">No active alerts</p>
+          <p className="text-sm text-neutral-dark">
+            The prediction engine will alert you when water sources show patterns requiring attention.
+          </p>
         </Card>
       )}
+
       {trends?.risk_sources && trends.risk_sources.length > 0 && (
-        <Card title="Elevated risk sources">
-          <ul className="space-y-2 text-sm">
+        <Card title="Elevated Risk Sources" className="space-y-3">
+          <div className="space-y-2">
             {trends.risk_sources.map((r) => (
-              <li key={r.source_id} className="flex justify-between border-b py-2">
-                <span>{r.source_name}</span>
-                <span className="font-semibold">{r.suggested_action}</span>
-              </li>
+              <div key={r.source_id} className="flex justify-between items-center border-b pb-3 last:border-b-0">
+                <div>
+                  <p className="font-semibold text-primary">{r.source_name}</p>
+                  <p className="text-xs text-neutral">{r.report_count_30d} report(s) in 30 days</p>
+                </div>
+                <div className="text-right">
+                  <p className={`text-sm font-semibold ${r.risk_level === 'high' ? 'text-danger' : 'text-caution-yellow'}`}>
+                    {r.risk_level.toUpperCase()}
+                  </p>
+                  <p className="text-xs text-neutral">{r.suggested_action}</p>
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         </Card>
       )}
     </div>

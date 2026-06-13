@@ -36,6 +36,7 @@ export function DispatchCenter() {
   const [eta, setEta] = useState('')
   const [notes, setNotes] = useState('')
   const [viewMode, setViewMode] = useState<'kanban' | 'list'>('kanban')
+  const [modalMode, setModalMode] = useState<'view' | 'edit'>('view')
 
   const load = useCallback(async () => {
     try {
@@ -69,6 +70,13 @@ export function DispatchCenter() {
     setStatus(c.status)
     setEta(c.eta ? new Date(c.eta).toISOString().slice(0, 16) : '')
     setNotes(c.notes ?? '')
+    setSelectedCase(c)
+    setModalMode('edit')
+  }
+
+  const openView = (c: CaseWithReport) => {
+    setSelectedCase(c)
+    setModalMode('view')
   }
 
   const save = async () => {
@@ -128,14 +136,14 @@ export function DispatchCenter() {
             size="sm"
             onClick={() => setViewMode('kanban')}
           >
-            📊 Kanban
+            Kanban
           </Button>
           <Button
             variant={viewMode === 'list' ? 'primary' : 'outline'}
             size="sm"
             onClick={() => setViewMode('list')}
           >
-            📋 List
+            List
           </Button>
           <Button variant="outline" size="sm" onClick={load}>
             Refresh
@@ -188,11 +196,8 @@ export function DispatchCenter() {
                       <DispatchCard
                         key={c.id}
                         case={c}
-                        onEdit={() => {
-                          openEdit(c)
-                          setSelectedCase(c)
-                        }}
-                        onView={() => setSelectedCase(c)}
+                        onAssign={() => openEdit(c)}
+                        onViewDetails={() => openView(c)}
                       />
                     ))
                   )}
@@ -254,12 +259,16 @@ export function DispatchCenter() {
                         <Button
                           variant="secondary"
                           size="sm"
-                          onClick={() => {
-                            openEdit(c)
-                            setSelectedCase(c)
-                          }}
+                          onClick={() => openView(c)}
                         >
-                          Edit
+                          Details
+                        </Button>
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          onClick={() => openEdit(c)}
+                        >
+                          Assign
                         </Button>
                       </td>
                     </tr>
@@ -271,12 +280,12 @@ export function DispatchCenter() {
         </div>
       )}
 
-      {/* Edit Modal */}
+      {/* Detail Modal */}
       {selectedCase && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <Card className="w-full max-w-md space-y-4">
             <h2 className="text-xl font-bold">
-              Edit Case {selectedCase.id.slice(0, 8)}…
+              {modalMode === 'view' ? 'Case Details' : 'Assign & Update Case'} {selectedCase.id.slice(0, 8)}…
             </h2>
 
             {selectedCase.report && (
@@ -296,52 +305,98 @@ export function DispatchCenter() {
               </Card>
             )}
 
-            <div className="space-y-3">
-              <Select
-                label="Status"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                options={STATUS_OPTIONS.map((o) => ({
-                  value: o.value,
-                  label: o.label,
-                }))}
-              />
-
-              <Select
-                label="Assigned Team"
-                value={team}
-                onChange={(e) => setTeam(e.target.value)}
-                options={[
-                  { value: '', label: 'Unassigned' },
-                  ...TEAMS.map((t) => ({ value: t, label: t })),
-                ]}
-              />
-
-              <Input
-                label="ETA (Estimated Time of Arrival)"
-                type="datetime-local"
-                value={eta}
-                onChange={(e) => setEta(e.target.value)}
-              />
-
-              <div className="flex flex-col">
-                <label className="text-sm font-medium text-neutral mb-1">Notes</label>
-                <textarea
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Add progress notes, findings, or next steps..."
-                  className="p-2 border border-outline rounded-lg focus:ring-2 focus:ring-primary outline-none resize-none h-24"
-                />
+            {modalMode === 'view' ? (
+              /* View Mode */
+              <div className="space-y-3">
+                <div>
+                  <p className="text-xs text-neutral uppercase mb-1">Status</p>
+                  <Badge
+                    variant={
+                      selectedCase.status === 'open'
+                        ? 'danger'
+                        : selectedCase.status === 'assigned'
+                          ? 'warning'
+                          : selectedCase.status === 'in_progress'
+                            ? 'primary'
+                            : 'safe'
+                    }
+                  >
+                    {STATUS_OPTIONS.find((o) => o.value === selectedCase.status)?.label}
+                  </Badge>
+                </div>
+                <div>
+                  <p className="text-xs text-neutral uppercase mb-1">Assigned Team</p>
+                  <p className="text-sm font-medium">{selectedCase.assigned_team || 'Unassigned'}</p>
+                </div>
+                {selectedCase.eta && (
+                  <div>
+                    <p className="text-xs text-neutral uppercase mb-1">ETA</p>
+                    <p className="text-sm font-medium">{formatDate(selectedCase.eta)}</p>
+                  </div>
+                )}
+                {selectedCase.notes && (
+                  <div>
+                    <p className="text-xs text-neutral uppercase mb-1">Notes</p>
+                    <p className="text-sm text-neutral-dark">{selectedCase.notes}</p>
+                  </div>
+                )}
               </div>
-            </div>
+            ) : (
+              /* Edit Mode */
+              <div className="space-y-3">
+                <Select
+                  label="Status"
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  options={STATUS_OPTIONS.map((o) => ({
+                    value: o.value,
+                    label: o.label,
+                  }))}
+                />
+
+                <Select
+                  label="Assigned Team"
+                  value={team}
+                  onChange={(e) => setTeam(e.target.value)}
+                  options={[
+                    { value: '', label: 'Unassigned' },
+                    ...TEAMS.map((t) => ({ value: t, label: t })),
+                  ]}
+                />
+
+                <Input
+                  label="ETA (Estimated Time of Arrival)"
+                  type="datetime-local"
+                  value={eta}
+                  onChange={(e) => setEta(e.target.value)}
+                />
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-neutral mb-1">Notes</label>
+                  <textarea
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    placeholder="Add progress notes, findings, or next steps..."
+                    className="p-2 border border-outline rounded-lg focus:ring-2 focus:ring-primary outline-none resize-none h-24"
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="flex gap-2 justify-end pt-4 border-t">
               <Button variant="outline" onClick={() => setSelectedCase(null)}>
-                Cancel
+                {modalMode === 'view' ? 'Close' : 'Cancel'}
               </Button>
-              <Button variant="primary" onClick={save}>
-                Save Changes
-              </Button>
+              {modalMode === 'edit' && (
+                <Button variant="primary" onClick={save}>
+                  Save Changes
+                </Button>
+              )}
+              {modalMode === 'view' && (
+                <Button variant="primary" onClick={() => openEdit(selectedCase)}>
+                  Edit Assignment
+                </Button>
+              )}
             </div>
           </Card>
         </div>
@@ -353,17 +408,17 @@ export function DispatchCenter() {
 // Dispatch Card Component
 function DispatchCard({
   case: c,
-  onEdit,
-  onView,
+  onAssign,
+  onViewDetails,
 }: {
   case: CaseWithReport
-  onEdit: () => void
-  onView: () => void
+  onAssign: () => void
+  onViewDetails: () => void
 }) {
   return (
     <Card
       className="cursor-pointer hover:shadow-md transition-shadow bg-white"
-      onClick={onView}
+      onClick={onViewDetails}
     >
       <div className="space-y-2">
         <div className="flex items-start justify-between gap-2">
@@ -407,17 +462,30 @@ function DispatchCard({
           <p className="text-xs italic text-neutral line-clamp-2">"{c.notes}"</p>
         )}
 
-        <Button
-          variant="outline"
-          size="sm"
-          className="w-full mt-2"
-          onClick={(e) => {
-            e.stopPropagation()
-            onEdit()
-          }}
-        >
-          Edit
-        </Button>
+        <div className="flex gap-2 mt-3 pt-3 border-t">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="flex-1"
+            onClick={(e) => {
+              e.stopPropagation()
+              onViewDetails()
+            }}
+          >
+            View Details
+          </Button>
+          <Button
+            variant="primary"
+            size="sm"
+            className="flex-1"
+            onClick={(e) => {
+              e.stopPropagation()
+              onAssign()
+            }}
+          >
+            Assign
+          </Button>
+        </div>
       </div>
     </Card>
   )

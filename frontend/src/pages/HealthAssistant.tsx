@@ -35,7 +35,7 @@ const QUICK_QUESTIONS = {
 
 export function HealthAssistant() {
   const [language, setLanguage] = useState<'en' | 'krio'>('en')
-  const { response, streaming, loading, error, ask, stream, clearState } = useAI()
+  const { response, streaming, loading, error, stream, clearState } = useAI()
 
   useEffect(() => {
     // AI health check happens automatically in the component
@@ -155,8 +155,7 @@ export function HealthAssistant() {
               <div className="bg-white border border-gray-200 p-4 rounded-lg overflow-x-auto">
                 <div className="prose prose-sm max-w-none">
                 <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}
-                  
+                  remarkPlugins={[remarkGfm]}                 
                 >
                   {streaming}
                 </ReactMarkdown>

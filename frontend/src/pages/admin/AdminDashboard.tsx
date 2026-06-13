@@ -92,7 +92,7 @@ export function AdminDashboard() {
           <div className="flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-danger flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <h3 className="font-semibold text-danger">🚨 Critical Issues ({criticalReports.length})</h3>
+              <h3 className="font-semibold text-danger">Critical Issues ({criticalReports.length})</h3>
               <p className="text-sm text-neutral mt-1">
                 Immediate attention required for these water sources.
               </p>
@@ -220,22 +220,22 @@ export function AdminDashboard() {
             <h3 className="font-bold mb-3">Quick Actions</h3>
             <Link to="/admin/reports">
               <Button variant="secondary" size="sm" className="w-full justify-start">
-                📋 View All Reports
+                View All Reports
               </Button>
             </Link>
             <Link to="/admin/dispatch">
               <Button variant="secondary" size="sm" className="w-full justify-start">
-                🚗 Dispatch Center
+                Dispatch Center
               </Button>
             </Link>
             <Link to="/admin/sources">
               <Button variant="secondary" size="sm" className="w-full justify-start">
-                💧 Source Management
+                Source Management
               </Button>
             </Link>
             <Link to="/admin/alerts">
               <Button variant="secondary" size="sm" className="w-full justify-start">
-                ⚠️ Alerts & Warnings
+                Alerts & Warnings
               </Button>
             </Link>
           </Card>

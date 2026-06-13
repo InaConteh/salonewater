@@ -1,16 +1,25 @@
 import { useEffect, useState } from 'react'
-import { ChevronDown, Download, Filter, RefreshCw } from 'lucide-react'
+import { ChevronDown, Download, Filter, RefreshCw, AlertCircle, User, Calendar } from 'lucide-react'
 import { LoadingState, ErrorState } from '@/components/common/LoadingState'
 import { Badge, Button, Card, Input, Select } from '@/components/ui'
 import { apiClient, type Report } from '@/services/api'
 import { formatDate, getStatusLabel } from '@/lib/status'
+import { useToast } from '@/contexts/ToastContext'
 
 export function AdminReports() {
+  const { showToast } = useToast()
   const [reports, setReports] = useState<Report[]>([])
   const [filteredReports, setFilteredReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [refreshing, setRefreshing] = useState(false)
+
+  // Modal states
+  const [selectedReport, setSelectedReport] = useState<Report | null>(null)
+  const [modalMode, setModalMode] = useState<'view' | 'assign'>('view')
+  const [assigningTeam, setAssigningTeam] = useState('')
+  const [assigningEta, setAssigningEta] = useState('')
+  const [assigningNotes, setAssigningNotes] = useState('')
 
   // Filter states
   const [searchTerm, setSearchTerm] = useState('')
@@ -48,6 +57,42 @@ export function AdminReports() {
   useEffect(() => {
     loadReports()
   }, [])
+
+  // Modal handlers
+  const handleViewDetails = (report: Report) => {
+    setSelectedReport(report)
+    setModalMode('view')
+  }
+
+  const handleAssignClick = (report: Report) => {
+    setSelectedReport(report)
+    setModalMode('assign')
+    setAssigningTeam('')
+    setAssigningEta('')
+    setAssigningNotes('')
+  }
+
+  const handleCreateDispatch = async () => {
+    if (!selectedReport || !assigningTeam || !assigningEta) {
+      showToast('Please fill in all required fields', 'warning')
+      return
+    }
+
+    try {
+      await apiClient.createDispatch({
+        report_id: selectedReport.id,
+        assigned_team: assigningTeam,
+        eta: new Date(assigningEta).toISOString(),
+        status: 'assigned',
+        notes: assigningNotes,
+      })
+      showToast('Dispatch case created successfully', 'success')
+      setSelectedReport(null)
+      loadReports()
+    } catch (err) {
+      showToast('Failed to create dispatch case', 'danger')
+    }
+  }
 
   // Apply filters and sorting
   useEffect(() => {
@@ -310,7 +355,12 @@ export function AdminReports() {
       ) : viewMode === 'card' ? (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {paginatedReports.map((report) => (
-            <ReportCard key={report.id} report={report} />
+            <ReportCard
+              key={report.id}
+              report={report}
+              onViewDetails={() => handleViewDetails(report)}
+              onAssign={() => handleAssignClick(report)}
+            />
           ))}
         </div>
       ) : (
@@ -336,9 +386,20 @@ export function AdminReports() {
                   <td className="px-4 py-3 text-neutral">{report.cause_category?.replace(/_/g, ' ')}</td>
                   <td className="px-4 py-3 text-neutral">{report.district}</td>
                   <td className="px-4 py-3 text-xs text-neutral">{formatDate(report.timestamp)}</td>
-                  <td className="px-4 py-3">
-                    <Button variant="outline" size="sm">
-                      View
+                  <td className="px-4 py-3 space-x-2 flex">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => handleViewDetails(report)}
+                    >
+                      Details
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={() => handleAssignClick(report)}
+                    >
+                      Dispatch
                     </Button>
                   </td>
                 </tr>
@@ -374,12 +435,135 @@ export function AdminReports() {
           </div>
         </div>
       )}
+
+      {/* Report Details/Assignment Modal */}
+      {selectedReport && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <Card className="w-full max-w-md space-y-4">
+            <h2 className="text-xl font-bold">
+              {modalMode === 'view' ? 'Report Details' : 'Create Dispatch'} - {selectedReport.source_name || selectedReport.source_id}
+            </h2>
+
+            {modalMode === 'view' ? (
+              /* View Mode */
+              <div className="space-y-4">
+                <div className="bg-bgLight rounded-lg p-3 space-y-2">
+                  <div className="flex items-start gap-2">
+                    <AlertCircle className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-sm font-semibold text-primary">Cause</p>
+                      <p className="text-sm text-neutral">{selectedReport.cause_category?.replace(/_/g, ' ')}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Badge variant={selectedReport.status as any}>
+                      {getStatusLabel(selectedReport.status || '')}
+                    </Badge>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs text-neutral uppercase font-semibold">District</p>
+                  <p className="text-sm">{selectedReport.district}</p>
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-xs text-neutral uppercase font-semibold">Reported</p>
+                  <p className="text-sm">{formatDate(selectedReport.timestamp)}</p>
+                </div>
+
+                {selectedReport.message && (
+                  <div className="space-y-2">
+                    <p className="text-xs text-neutral uppercase font-semibold">Message</p>
+                    <p className="text-sm text-neutral-dark italic">"{selectedReport.message}"</p>
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <p className="text-xs text-neutral uppercase font-semibold">Report ID</p>
+                  <p className="font-mono text-xs text-neutral">{selectedReport.id}</p>
+                </div>
+              </div>
+            ) : (
+              /* Assign Mode */
+              <div className="space-y-3">
+                <div className="bg-bgLight rounded-lg p-3 space-y-2">
+                  <p className="text-sm font-semibold text-primary">{selectedReport.source_name}</p>
+                  <p className="text-xs text-neutral">{selectedReport.cause_category?.replace(/_/g, ' ')} • {selectedReport.district}</p>
+                  {selectedReport.message && (
+                    <p className="text-xs italic text-neutral-dark">"{selectedReport.message}"</p>
+                  )}
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-neutral mb-1">Assigned Team *</label>
+                  <select
+                    value={assigningTeam}
+                    onChange={(e) => setAssigningTeam(e.target.value)}
+                    className="px-3 py-2 border border-outline rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                  >
+                    <option value="">Select a team...</option>
+                    <option value="Western Response Unit">Western Response Unit</option>
+                    <option value="Northern Field Team">Northern Field Team</option>
+                    <option value="Eastern Maintenance Crew">Eastern Maintenance Crew</option>
+                    <option value="Southern Rapid Response">Southern Rapid Response</option>
+                  </select>
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-neutral mb-1">ETA (Estimated Time of Arrival) *</label>
+                  <input
+                    type="datetime-local"
+                    value={assigningEta}
+                    onChange={(e) => setAssigningEta(e.target.value)}
+                    className="px-3 py-2 border border-outline rounded-lg focus:ring-2 focus:ring-primary outline-none"
+                  />
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-neutral mb-1">Notes</label>
+                  <textarea
+                    value={assigningNotes}
+                    onChange={(e) => setAssigningNotes(e.target.value)}
+                    placeholder="Add dispatch notes..."
+                    className="px-3 py-2 border border-outline rounded-lg focus:ring-2 focus:ring-primary outline-none resize-none h-20"
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="flex gap-2 justify-end pt-4 border-t">
+              <Button variant="outline" onClick={() => setSelectedReport(null)}>
+                {modalMode === 'view' ? 'Close' : 'Cancel'}
+              </Button>
+              {modalMode === 'view' && (
+                <Button variant="primary" onClick={() => setModalMode('assign')}>
+                  Create Dispatch
+                </Button>
+              )}
+              {modalMode === 'assign' && (
+                <Button variant="primary" onClick={handleCreateDispatch}>
+                  Assign & Dispatch
+                </Button>
+              )}
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   )
 }
 
 // Report Card Component
-function ReportCard({ report }: { report: Report }) {
+function ReportCard({
+  report,
+  onViewDetails,
+  onAssign,
+}: {
+  report: Report
+  onViewDetails: () => void
+  onAssign: () => void
+}) {
   return (
     <Card className="flex flex-col gap-3">
       <div className="flex items-start justify-between gap-2">
@@ -412,10 +596,10 @@ function ReportCard({ report }: { report: Report }) {
       )}
 
       <div className="mt-auto flex gap-2 pt-2">
-        <Button variant="primary" size="sm" className="flex-1">
+        <Button variant="primary" size="sm" className="flex-1" onClick={onViewDetails}>
           View Details
         </Button>
-        <Button variant="outline" size="sm" className="flex-1">
+        <Button variant="outline" size="sm" className="flex-1" onClick={onAssign}>
           Assign
         </Button>
       </div>
