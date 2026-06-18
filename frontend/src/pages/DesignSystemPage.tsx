@@ -44,7 +44,7 @@ export function DesignSystemPage() {
           <Button>Primary</Button>
           <Button variant="success">Success</Button>
           <Button variant="warning">Warning</Button>
-          <Button variant="danger">Danger</Button>
+          <Button variant="destructive">Danger</Button>
           <Button variant="outline">Outline</Button>
           <Button variant="ghost">Ghost</Button>
         </div>

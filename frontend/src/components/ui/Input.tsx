@@ -1,65 +1,32 @@
-import type { InputHTMLAttributes, ReactNode } from 'react'
-import { cn } from '@/lib/cn'
+import { forwardRef } from 'react'
+import { cn } from '@/lib/utils'
+import { Input as ShadcnInput } from './shadcn/input'
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label: string
-  hint?: string
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  label?: string
   error?: string
-  id?: string
-  rightAddon?: ReactNode
+  hint?: string
 }
 
-export function Input({
-  label,
-  hint,
-  error,
-  id,
-  className,
-  rightAddon,
-  required,
-  ...props
-}: InputProps) {
-  const inputId = id ?? props.name ?? label.toLowerCase().replace(/\s+/g, '-')
-
-  return (
-    <div className="w-full">
-      <label htmlFor={inputId} className="mb-1.5 block text-base font-semibold text-body">
-        {label}
-        {required && <span className="ml-1 text-danger" aria-hidden="true">*</span>}
-      </label>
-      <div className="relative">
-        <input
-          id={inputId}
-          required={required}
-          aria-invalid={!!error}
-          aria-describedby={
-            error ? `${inputId}-error` : hint ? `${inputId}-hint` : undefined
-          }
-          className={cn(
-            'w-full rounded-lg border-2 border-neutral-light bg-surface px-4 py-3 text-base text-body',
-            'placeholder:text-neutral focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25',
-            error && 'border-danger focus:border-danger focus:ring-danger/25',
-            rightAddon ? 'pr-12' : undefined,
-            className,
-          )}
+export const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ label, error, hint, className, ...props }, ref) => {
+    return (
+      <div className="w-full space-y-1.5">
+        {label && (
+          <label className="text-sm font-semibold text-foreground/80">
+            {label}
+          </label>
+        )}
+        <ShadcnInput
+          ref={ref}
+          className={cn(error && 'border-destructive focus-visible:ring-destructive', className)}
           {...props}
         />
-        {rightAddon && (
-          <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-            {rightAddon}
-          </div>
-        )}
+        {hint && !error && <p className="text-xs text-muted-foreground">{hint}</p>}
+        {error && <p className="text-xs text-destructive font-medium">{error}</p>}
       </div>
-      {hint && !error && (
-        <p id={`${inputId}-hint`} className="mt-1.5 text-sm text-neutral">
-          {hint}
-        </p>
-      )}
-      {error && (
-        <p id={`${inputId}-error`} className="mt-1.5 text-sm font-medium text-danger" role="alert">
-          {error}
-        </p>
-      )}
-    </div>
-  )
-}
+    )
+  }
+)
+
+Input.displayName = 'Input'

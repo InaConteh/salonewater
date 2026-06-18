@@ -116,7 +116,7 @@ export function MapComponent({
               <div className="flex flex-col gap-2 pt-2">
                 <Button
                   size="sm"
-                  variant="primary"
+                  variant="default"
                   className="w-full"
                   onClick={() => onReportIssue?.(source)}
                 >

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Plus, Search, Edit, Trash2, MapPin, Activity, Droplets } from 'lucide-react'
 import {
   apiClient,
   CAUSE_OPTIONS,
@@ -8,7 +9,8 @@ import type { WaterSource, WaterStatus } from '@/types'
 import { ErrorState, LoadingState } from '@/components/common/LoadingState'
 import { Badge, Button, Card, Input, Modal, Select } from '@/components/ui'
 import { useToast } from '@/contexts/ToastContext'
-import { formatDate, STATUS_LABELS } from '@/lib/status'
+import { formatDate, getStatusLabel } from '@/lib/status'
+import { cn } from '@/lib/utils'
 
 const emptyForm = {
   name: '',
@@ -25,6 +27,7 @@ export function SourceManagement() {
   const [sources, setSources] = useState<WaterSource[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [districtFilter, setDistrictFilter] = useState('')
   const [modalOpen, setModalOpen] = useState(false)
@@ -53,6 +56,7 @@ export function SourceManagement() {
   const filtered = sources.filter((s) => {
     if (statusFilter && s.status !== statusFilter) return false
     if (districtFilter && s.district !== districtFilter) return false
+    if (searchTerm && !s.name.toLowerCase().includes(searchTerm.toLowerCase())) return false
     return true
   })
 
@@ -136,67 +140,112 @@ export function SourceManagement() {
   }
 
   return (
-    <div className="page-container space-y-6 py-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-bold text-primary">Water sources</h1>
-        <Button onClick={openCreate}>Add source</Button>
+    <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
+      {/* Header */}
+      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between bg-white p-8 rounded-3xl shadow-soft-xl border border-slate-100">
+        <div>
+          <h1 className="text-4xl font-black tracking-tight text-slate-900">Source Asset Manager</h1>
+          <p className="text-slate-500 font-medium mt-1">
+             Inventory management for {sources.length} community water assets
+          </p>
+        </div>
+        <Button onClick={openCreate} className="rounded-xl font-bold h-12 px-6 shadow-lg shadow-primary/20">
+          <Plus className="h-5 w-5 mr-2" />
+          Register New Source
+        </Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Select
-          label="Status"
-          name="status-filter"
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          options={[{ value: '', label: 'All' }, ...STATUS_OPTIONS]}
-        />
-        <Select
-          label="District"
-          name="district-filter"
-          value={districtFilter}
-          onChange={(e) => setDistrictFilter(e.target.value)}
-          options={[
-            { value: '', label: 'All' },
-            ...districts.map((d) => ({ value: d, label: d })),
-          ]}
-        />
-      </div>
-
-      <Card padding="sm">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[640px] text-left text-sm">
-            <thead>
-              <tr className="border-b text-neutral">
-                <th className="py-2 pr-4">Name</th>
-                <th className="py-2 pr-4">Status</th>
-                <th className="py-2 pr-4">District</th>
-                <th className="py-2 pr-4">Last updated</th>
-                <th className="py-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((s) => (
-                <tr key={s.id} className="border-b border-neutral-light/80">
-                  <td className="py-3 pr-4 font-medium">{s.name}</td>
-                  <td className="py-3 pr-4">
-                    <Badge status={s.status}>{STATUS_LABELS[s.status]}</Badge>
-                  </td>
-                  <td className="py-3 pr-4">{s.district ?? '—'}</td>
-                  <td className="py-3 pr-4 text-neutral">{formatDate(s.last_updated)}</td>
-                  <td className="py-3 space-x-2">
-                    <Button size="sm" variant="outline" onClick={() => openEdit(s)}>
-                      Edit
-                    </Button>
-                    <Button size="sm" variant="danger" onClick={() => setDeleteTarget(s)}>
-                      Delete
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Filters */}
+      <Card className="border-none shadow-soft-xl p-6 bg-white">
+        <div className="grid gap-6 md:grid-cols-12 items-end">
+           <div className="md:col-span-6 relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Search by asset name..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-12 pr-4 py-3 bg-slate-50 border-none rounded-xl text-slate-900 placeholder:text-slate-400 font-medium focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+              />
+           </div>
+           <div className="md:col-span-3">
+              <Select
+                label="Asset Status"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                options={[{ value: '', label: 'All Statuses' }, ...STATUS_OPTIONS]}
+              />
+           </div>
+           <div className="md:col-span-3">
+              <Select
+                label="District Scope"
+                value={districtFilter}
+                onChange={(e) => setDistrictFilter(e.target.value)}
+                options={[
+                  { value: '', label: 'All Districts' },
+                  ...districts.map((d) => ({ value: d, label: d })),
+                ]}
+              />
+           </div>
         </div>
       </Card>
+
+      {/* Grid Display */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+         {filtered.map((s) => (
+            <Card key={s.id} className="border-none shadow-soft-xl bg-white p-6 hover:shadow-soft-2xl transition-all group relative overflow-hidden">
+               <div className={cn(
+                 "absolute top-0 right-0 w-32 h-32 blur-3xl opacity-10 -translate-y-16 translate-x-16 rounded-full",
+                 s.status === 'red' ? "bg-destructive" :
+                 s.status === 'yellow' ? "bg-warning" : "bg-success"
+               )}></div>
+
+               <div className="flex items-start justify-between mb-6 relative z-10">
+                  <div className="h-12 w-12 rounded-2xl bg-slate-50 flex items-center justify-center group-hover:scale-110 transition-transform">
+                     <Droplets className={cn(
+                       "h-6 w-6",
+                       s.status === 'red' ? "text-destructive" :
+                       s.status === 'yellow' ? "text-warning" : "text-success"
+                     )} />
+                  </div>
+                  <div className="flex gap-1">
+                     <Button variant="ghost" size="icon" onClick={() => openEdit(s)} className="h-8 w-8 rounded-lg hover:bg-slate-100">
+                        <Edit className="h-4 w-4 text-slate-400" />
+                     </Button>
+                     <Button variant="ghost" size="icon" onClick={() => setDeleteTarget(s)} className="h-8 w-8 rounded-lg hover:bg-destructive/10 hover:text-destructive">
+                        <Trash2 className="h-4 w-4" />
+                     </Button>
+                  </div>
+               </div>
+
+               <div className="space-y-4 relative z-10">
+                  <div>
+                    <h4 className="font-black text-slate-900 text-lg leading-tight">{s.name}</h4>
+                    <Badge variant={s.status === 'red' ? 'destructive' : s.status === 'yellow' ? 'outline' : 'secondary'} className="mt-2 text-[10px] uppercase font-black px-2">
+                       {getStatusLabel(s.status)}
+                    </Badge>
+                  </div>
+
+                  <div className="space-y-2">
+                     <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+                        <MapPin className="h-3.5 w-3.5" />
+                        {s.district || 'Unknown District'}
+                     </div>
+                     <div className="flex items-center gap-2 text-xs font-bold text-slate-500">
+                        <Activity className="h-3.5 w-3.5" />
+                        Updated {formatDate(s.last_updated)}
+                     </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-50">
+                     <p className="text-xs text-slate-400 font-medium line-clamp-2 min-h-[2.5rem]">
+                        {s.description || 'No additional description provided for this water source asset.'}
+                     </p>
+                  </div>
+               </div>
+            </Card>
+         ))}
+      </div>
 
       <Modal
         open={modalOpen}
@@ -273,7 +322,7 @@ export function SourceManagement() {
             <Button variant="ghost" onClick={() => setDeleteTarget(null)}>
               Cancel
             </Button>
-            <Button variant="danger" onClick={confirmDelete}>
+            <Button variant="destructive" onClick={confirmDelete}>
               Delete
             </Button>
           </>

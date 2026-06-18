@@ -8,7 +8,7 @@ interface Role {
   username: string
   access: string[]
   description: string
-  color: 'primary' | 'safe' | 'warning' | 'danger'
+  color: 'default' | 'secondary' | 'outline' | 'destructive'
 }
 
 const ROLES: Role[] = [
@@ -18,7 +18,7 @@ const ROLES: Role[] = [
     username: 'admin',
     access: ['View all reports', 'Manage sources', 'Dispatch management', 'View analytics', 'Delete data', 'User management'],
     description: 'Full system access. Can create, modify, and delete any resource.',
-    color: 'danger',
+    color: 'destructive',
   },
   {
     id: 'technician',
@@ -26,7 +26,7 @@ const ROLES: Role[] = [
     username: 'tech',
     access: ['View assigned dispatch', 'Update repair status', 'Log maintenance notes', 'View source history'],
     description: 'Can view and update repair cases assigned to them. Used by field teams.',
-    color: 'primary',
+    color: 'default',
   },
   {
     id: 'committee',
@@ -34,7 +34,7 @@ const ROLES: Role[] = [
     username: 'committee',
     access: ['View local reports', 'Schedule maintenance', 'View district statistics', 'Submit reports'],
     description: 'Can access district-level data and submit water quality reports.',
-    color: 'safe',
+    color: 'secondary',
   },
 ]
 

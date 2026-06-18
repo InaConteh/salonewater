@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Clock, CheckCircle, AlertCircle, User, MapPin } from 'lucide-react'
+import { Clock, CheckCircle, AlertCircle, User, MapPin, RefreshCw } from 'lucide-react'
 import { apiClient, type RepairCase, type Report } from '@/services/api'
+import { cn } from '@/lib/utils'
 import { ErrorState, LoadingState } from '@/components/common/LoadingState'
 import { Badge, Button, Card, Input, Select } from '@/components/ui'
 import { useToast } from '@/contexts/ToastContext'
@@ -123,73 +124,83 @@ export function DispatchCenter() {
   }
 
   return (
-    <div className="page-container space-y-6 py-8">
+    <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
       {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between bg-white p-8 rounded-3xl shadow-soft-xl border border-slate-100">
         <div>
-          <h1 className="text-3xl font-bold text-primary">Dispatch Center</h1>
-          <p className="text-neutral">Manage repair workflows and technician assignments</p>
+          <h1 className="text-4xl font-black tracking-tight text-slate-900">Dispatch Center</h1>
+          <p className="text-slate-500 font-medium mt-1">
+             Coordination hub for {cases.length} active maintenance workflows
+          </p>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant={viewMode === 'kanban' ? 'primary' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('kanban')}
-          >
-            Kanban
-          </Button>
-          <Button
-            variant={viewMode === 'list' ? 'primary' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('list')}
-          >
-            List
-          </Button>
-          <Button variant="outline" size="sm" onClick={load}>
-            Refresh
-          </Button>
+        <div className="flex items-center gap-3">
+           <div className="flex bg-slate-50 p-1 rounded-xl border border-slate-100">
+              <button
+                onClick={() => setViewMode('kanban')}
+                className={cn(
+                  "px-4 py-2 rounded-lg text-xs font-bold transition-all",
+                  viewMode === 'kanban' ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-900"
+                )}
+              >
+                Board
+              </button>
+              <button
+                onClick={() => setViewMode('list')}
+                className={cn(
+                  "px-4 py-2 rounded-lg text-xs font-bold transition-all",
+                  viewMode === 'list' ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-900"
+                )}
+              >
+                Table
+              </button>
+           </div>
+           <Button variant="outline" size="sm" onClick={load} className="rounded-xl font-bold h-10 border-slate-200">
+             <RefreshCw className="h-4 w-4 mr-2" />
+             Sync
+           </Button>
         </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card className="space-y-2">
-          <p className="text-xs text-neutral uppercase">Reported</p>
-          <p className="text-3xl font-bold text-danger">{stats.open}</p>
-        </Card>
-        <Card className="space-y-2">
-          <p className="text-xs text-neutral uppercase">Assigned</p>
-          <p className="text-3xl font-bold text-caution-yellow">{stats.assigned}</p>
-        </Card>
-        <Card className="space-y-2">
-          <p className="text-xs text-neutral uppercase">In Progress</p>
-          <p className="text-3xl font-bold text-primary">{stats.inProgress}</p>
-        </Card>
-        <Card className="space-y-2">
-          <p className="text-xs text-neutral uppercase">Resolved</p>
-          <p className="text-3xl font-bold text-safe-green">{stats.completed}</p>
-        </Card>
+      {/* Stats Grid */}
+      <div className="grid gap-6 md:grid-cols-4">
+        {[
+          { label: 'Reported', val: stats.open, color: 'text-destructive', bg: 'bg-destructive/5', border: 'border-destructive/10' },
+          { label: 'Assigned', val: stats.assigned, color: 'text-warning', bg: 'bg-warning/5', border: 'border-warning/10' },
+          { label: 'In Progress', val: stats.inProgress, color: 'text-primary', bg: 'bg-primary/5', border: 'border-primary/10' },
+          { label: 'Resolved', val: stats.completed, color: 'text-success', bg: 'bg-success/5', border: 'border-success/10' },
+        ].map((s, i) => (
+          <Card key={i} className={cn("p-6 border-none shadow-soft-xl relative overflow-hidden group", s.bg)}>
+            <div className={cn("absolute top-0 right-0 w-24 h-24 blur-3xl opacity-20 -translate-y-12 translate-x-12 rounded-full", s.color.replace('text', 'bg'))}></div>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 relative z-10">{s.label}</p>
+            <p className={cn("text-4xl font-black relative z-10", s.color)}>{s.val}</p>
+          </Card>
+        ))}
       </div>
 
       {/* Kanban View */}
       {viewMode === 'kanban' ? (
-        <div className="grid gap-4 lg:grid-cols-4 overflow-x-auto pb-4">
+        <div className="grid gap-6 lg:grid-cols-4 overflow-x-auto pb-4">
           {STATUS_OPTIONS.map((statusOpt) => {
             const Icon = statusOpt.icon
             const casesInStatus = groupedByStatus[statusOpt.value] || []
             return (
-              <div key={statusOpt.value} className="min-w-[300px] space-y-3 bg-bgLight rounded-lg p-4">
-                <div className="flex items-center gap-2 pb-3 border-b">
-                  <Icon className="h-5 w-5 text-primary" />
-                  <h3 className="font-semibold">{statusOpt.label}</h3>
-                  <span className="ml-auto text-xs font-bold bg-primary text-white px-2 py-1 rounded">
+              <div key={statusOpt.value} className="min-w-[320px] space-y-4 bg-slate-50/50 rounded-3xl p-6 border border-slate-100/50">
+                <div className="flex items-center justify-between pb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-lg bg-white shadow-sm flex items-center justify-center">
+                       <Icon className="h-4 w-4 text-slate-600" />
+                    </div>
+                    <h3 className="font-bold text-slate-900">{statusOpt.label}</h3>
+                  </div>
+                  <Badge className="bg-slate-200 text-slate-600 border-none font-bold">
                     {casesInStatus.length}
-                  </span>
+                  </Badge>
                 </div>
-                <div className="space-y-3">
+
+                <div className="space-y-4">
                   {casesInStatus.length === 0 ? (
-                    <div className="text-center py-8 text-neutral opacity-50">
-                      No cases
+                    <div className="text-center py-12 bg-white/40 border border-dashed border-slate-200 rounded-2xl">
+                      <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Empty</p>
                     </div>
                   ) : (
                     casesInStatus.map((c) => (
@@ -240,12 +251,12 @@ export function DispatchCenter() {
                         <Badge
                           variant={
                             c.status === 'open'
-                              ? 'danger'
+                              ? 'destructive'
                               : c.status === 'assigned'
-                                ? 'warning'
+                                ? 'outline'
                                 : c.status === 'in_progress'
-                                  ? 'primary'
-                                  : 'safe'
+                                  ? 'default'
+                                  : 'secondary'
                           }
                         >
                           {STATUS_OPTIONS.find((o) => o.value === c.status)?.label || c.status}
@@ -264,7 +275,7 @@ export function DispatchCenter() {
                           Details
                         </Button>
                         <Button
-                          variant="primary"
+                          variant="default"
                           size="sm"
                           onClick={() => openEdit(c)}
                         >
@@ -313,12 +324,12 @@ export function DispatchCenter() {
                   <Badge
                     variant={
                       selectedCase.status === 'open'
-                        ? 'danger'
+                        ? 'destructive'
                         : selectedCase.status === 'assigned'
-                          ? 'warning'
+                          ? 'outline'
                           : selectedCase.status === 'in_progress'
-                            ? 'primary'
-                            : 'safe'
+                            ? 'default'
+                            : 'secondary'
                     }
                   >
                     {STATUS_OPTIONS.find((o) => o.value === selectedCase.status)?.label}
@@ -388,12 +399,12 @@ export function DispatchCenter() {
                 {modalMode === 'view' ? 'Close' : 'Cancel'}
               </Button>
               {modalMode === 'edit' && (
-                <Button variant="primary" onClick={save}>
+                <Button variant="default" onClick={save}>
                   Save Changes
                 </Button>
               )}
               {modalMode === 'view' && (
-                <Button variant="primary" onClick={() => openEdit(selectedCase)}>
+                <Button variant="default" onClick={() => openEdit(selectedCase)}>
                   Edit Assignment
                 </Button>
               )}
@@ -417,67 +428,51 @@ function DispatchCard({
 }) {
   return (
     <Card
-      className="cursor-pointer hover:shadow-md transition-shadow bg-white"
+      className="cursor-pointer hover:shadow-soft-2xl transition-all bg-white border-none shadow-soft-xl p-5 group relative overflow-hidden"
       onClick={onViewDetails}
     >
-      <div className="space-y-2">
+      <div className="space-y-4 relative z-10">
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1 min-w-0">
-            <p className="font-semibold text-sm text-primary truncate">
+            <h4 className="font-black text-slate-900 text-sm truncate leading-tight group-hover:text-primary transition-colors">
               {c.report?.source_name || 'Unknown Source'}
-            </p>
-            <p className="text-xs text-neutral">{c.report?.district}</p>
+            </h4>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">{c.report?.district}</p>
           </div>
-          <Badge
-            variant={
-              c.status === 'open'
-                ? 'danger'
-                : c.status === 'assigned'
-                  ? 'warning'
-                  : c.status === 'in_progress'
-                    ? 'primary'
-                    : 'safe'
-            }
-            className="text-xs"
-          >
-            {STATUS_OPTIONS.find((o) => o.value === c.status)?.label}
-          </Badge>
         </div>
 
-        {c.assigned_team && (
-          <p className="text-xs text-neutral-dark flex items-center gap-1">
-            <User className="h-3 w-3" />
-            {c.assigned_team}
-          </p>
-        )}
+        <div className="space-y-2">
+           <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
+              <div className="h-5 w-5 rounded bg-slate-50 flex items-center justify-center">
+                 <User className="h-3 w-3 text-slate-400" />
+              </div>
+              {c.assigned_team || 'Unassigned'}
+           </div>
 
-        {c.eta && (
-          <p className="text-xs text-neutral-dark flex items-center gap-1">
-            <Clock className="h-3 w-3" />
-            ETA: {formatDate(c.eta)}
-          </p>
-        )}
+           {c.eta && (
+             <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
+                <div className="h-5 w-5 rounded bg-slate-50 flex items-center justify-center">
+                   <Clock className="h-3 w-3 text-slate-400" />
+                </div>
+                ETA: {formatDate(c.eta)}
+             </div>
+           )}
+        </div>
 
-        {c.notes && (
-          <p className="text-xs italic text-neutral line-clamp-2">"{c.notes}"</p>
-        )}
-
-        <div className="flex gap-2 mt-3 pt-3 border-t">
+        <div className="flex gap-2 pt-2">
           <Button
-            variant="secondary"
-            size="sm"
-            className="flex-1"
+            variant="outline"
+            className="flex-1 rounded-xl font-bold h-9 text-[10px] border-slate-200"
             onClick={(e) => {
               e.stopPropagation()
               onViewDetails()
             }}
           >
-            View Details
+            Details
           </Button>
           <Button
-            variant="primary"
-            size="sm"
-            className="flex-1"
+            variant="default"
+            className="flex-1 rounded-xl font-bold h-9 text-[10px]"
             onClick={(e) => {
               e.stopPropagation()
               onAssign()
