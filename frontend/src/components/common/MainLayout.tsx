@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import { Footer } from './Footer'
 import { Navbar } from './Navbar'
+import { FloatingAssistant } from '../ai/FloatingAssistant'
 
 export function MainLayout() {
   return (
@@ -15,6 +16,7 @@ export function MainLayout() {
       <main id="main-content" className="flex-1">
         <Outlet />
       </main>
+      <FloatingAssistant />
       <Footer />
     </div>
   )
