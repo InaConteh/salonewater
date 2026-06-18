@@ -1,54 +1,43 @@
-import type { HTMLAttributes, ReactNode } from 'react'
-import { cn } from '@/lib/cn'
+import { cn } from '@/lib/utils'
+import {
+  Card as ShadcnCard,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from './shadcn/card'
 
-export interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  children: ReactNode
-  title?: string
-  subtitle?: string
-  footer?: ReactNode
-  padding?: 'sm' | 'md' | 'lg'
-}
-
-const paddingClass = {
-  sm: 'p-3',
-  md: 'p-4 sm:p-5',
-  lg: 'p-6 sm:p-8',
+interface CardProps {
+  title?: React.ReactNode
+  subtitle?: React.ReactNode
+  children: React.ReactNode
+  footer?: React.ReactNode
+  className?: string
+  onClick?: () => void
 }
 
 export function Card({
-  children,
   title,
   subtitle,
+  children,
   footer,
-  padding = 'md',
   className,
-  ...props
+  onClick,
 }: CardProps) {
   return (
-    <div
-      className={cn(
-        'rounded-xl border border-neutral-light/80 bg-surface shadow-card',
-        className,
-      )}
-      {...props}
+    <ShadcnCard
+      className={cn(onClick && 'cursor-pointer hover:border-primary/50', className)}
+      onClick={onClick}
     >
       {(title || subtitle) && (
-        <div className={cn('border-b border-neutral-light/80', paddingClass[padding], 'pb-3')}>
-          {title && <h3 className="text-lg font-bold text-primary">{title}</h3>}
-          {subtitle && <p className="mt-1 text-sm text-neutral">{subtitle}</p>}
-        </div>
+        <CardHeader>
+          {title && <CardTitle className="text-xl">{title}</CardTitle>}
+          {subtitle && <CardDescription>{subtitle}</CardDescription>}
+        </CardHeader>
       )}
-      <div className={cn(!title && !subtitle && paddingClass[padding])}>{children}</div>
-      {footer && (
-        <div
-          className={cn(
-            'border-t border-neutral-light/80 bg-bgLight/50',
-            paddingClass[padding],
-          )}
-        >
-          {footer}
-        </div>
-      )}
-    </div>
+      <CardContent className={cn(!title && !subtitle && 'pt-6')}>{children}</CardContent>
+      {footer && <CardFooter>{footer}</CardFooter>}
+    </ShadcnCard>
   )
 }

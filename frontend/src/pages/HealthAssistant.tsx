@@ -4,8 +4,10 @@
  */
 
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { Sparkles, MessageCircle, Info, Languages, BookOpen, Map, Settings, Trash2 } from 'lucide-react'
 
 import {
   AIQueryForm,
@@ -13,8 +15,10 @@ import {
   AIHealthStatus,
 } from '@/components/ai'
 
+import { Button, Card } from '@/components/ui'
 import { useAI } from '@/hooks/useAI'
 import type { AIQuery } from '@/services/aiService'
+import { cn } from '@/lib/utils'
 
 const QUICK_QUESTIONS = {
   en: [
@@ -35,11 +39,8 @@ const QUICK_QUESTIONS = {
 
 export function HealthAssistant() {
   const [language, setLanguage] = useState<'en' | 'krio'>('en')
+  useEffect(() => {}, [])
   const { response, streaming, loading, error, stream, clearState } = useAI()
-
-  useEffect(() => {
-    // AI health check happens automatically in the component
-  }, [])
 
   const handleQuickQuestion = (q: string) => {
     stream({
@@ -54,193 +55,248 @@ export function HealthAssistant() {
   }
 
   return (
-    <div className="page-container space-y-8 py-8">
-      {/* Header */}
-      <header className="space-y-4">
-        <h1 className="text-4xl font-bold">
-          💧 Health Assistant
-        </h1>
-
-        <p className="text-lg text-gray-600">
-          Ask about water safety, sanitation, disease prevention,
-          and healthy water practices.
-        </p>
-
-        <div>
-          <AIHealthStatus />
+    <div className="min-h-screen bg-slate-50/50 pb-20">
+      {/* Hero Header */}
+      <section className="bg-primary pt-24 pb-32 text-white relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-1/3 h-full opacity-10 pointer-events-none">
+          <img
+            src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?q=80&w=2070&auto=format&fit=crop"
+            alt="Medical background"
+            className="w-full h-full object-cover"
+          />
         </div>
-      </header>
-
-      {/* Language Toggle */}
-      <div className="flex items-center gap-4">
-        <span className="text-sm font-medium text-gray-700">
-          Language:
-        </span>
-
-        <div className="flex gap-2">
-          {(['en', 'krio'] as const).map((lang) => (
-            <button
-              key={lang}
-              onClick={() => setLanguage(lang)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                language === lang
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              {lang === 'en' ? 'English' : 'Krio'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Quick Questions */}
-      <div className="space-y-3">
-        <h2 className="text-lg font-semibold">
-          Quick Questions
-        </h2>
-
-        <div className="grid gap-2">
-          {QUICK_QUESTIONS[language].map((q, idx) => (
-            <button
-              key={idx}
-              onClick={() => handleQuickQuestion(q)}
-              disabled={loading}
-              className="text-left p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 disabled:opacity-50 transition-colors"
-            >
-              <p className="text-gray-900">{q}</p>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Ask Custom Question */}
-      <div className="space-y-4 bg-gray-50 p-6 rounded-lg">
-        <h2 className="text-lg font-semibold">
-          Ask a Custom Question
-        </h2>
-
-        <AIQueryForm
-          onSubmit={handleCustomQuestion}
-          isLoading={loading}
-          disabled={loading}
-          placeholder={
-            language === 'en'
-              ? 'Ask about water safety, health risks, or how to stay healthy...'
-              : 'Ask bout wata safe, heltn risk, or how fo stay helty...'
-          }
-          showLanguageSelect={false}
-        />
-      </div>
-
-      {/* Response Area */}
-      {(loading || streaming || response || error) && (
-        <div className="space-y-4">
-
-          {loading && streaming === '' && (
-            <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
-              <p className="text-sm text-blue-600 font-medium">
-                🤖 Thinking...
+        <div className="page-container relative z-10">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-xs font-bold uppercase tracking-wider mb-4">
+                <Sparkles className="h-3 w-3" />
+                AI Powered Assistant
+              </div>
+              <h1 className="text-4xl md:text-5xl font-extrabold mb-4">Water Health Assistant</h1>
+              <p className="text-xl text-white/80 font-medium leading-relaxed">
+                Your AI companion for water safety, sanitation, and disease prevention in Sierra Leone.
               </p>
             </div>
-          )}
+            <div className="shrink-0">
+               <AIHealthStatus />
+            </div>
+          </div>
+        </div>
+      </section>
 
-          {/* Streaming Markdown Response */}
-          {streaming && (
-            <div className="space-y-3">
-              <div className="text-sm font-medium text-gray-700">
-                AI Response:
-              </div>
+      <div className="page-container -mt-16 relative z-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-              <div className="bg-white border border-gray-200 p-4 rounded-lg overflow-x-auto">
-                <div className="prose prose-sm max-w-none">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}                 
-                >
-                  {streaming}
-                </ReactMarkdown>
+          {/* Sidebar / Controls */}
+          <div className="lg:col-span-4 space-y-6">
+            <Card className="p-6 border-none shadow-soft-xl bg-white overflow-hidden">
+              <div className="flex items-center gap-3 mb-6 pb-6 border-b">
+                <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <Languages className="h-5 w-5 text-primary" />
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* Final Response */}
-          {response && !loading && (
-            <div className="space-y-3">
-              <div className="text-sm font-medium text-gray-700">
-                Answer:
+                <h3 className="font-bold text-lg">Language Settings</h3>
               </div>
 
-              <AIResponseDisplay response={response} />
-            </div>
-          )}
-
-          {/* Error */}
-          {error && (
-            <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
-              <p className="text-sm text-red-600">
-                <strong>Error:</strong> {error}
+              <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
+                {(['en', 'krio'] as const).map((lang) => (
+                  <button
+                    key={lang}
+                    onClick={() => setLanguage(lang)}
+                    className={cn(
+                      "py-2 px-4 rounded-lg font-bold text-sm transition-all",
+                      language === lang
+                        ? "bg-white text-primary shadow-sm"
+                        : "text-slate-500 hover:text-slate-700"
+                    )}
+                  >
+                    {lang === 'en' ? 'English' : 'Krio'}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-4 text-xs text-muted-foreground italic">
+                {language === 'en'
+                  ? 'Switch to Krio for responses in your local dialect.'
+                  : 'Una switch go English if una wan for read am na English.'}
               </p>
+            </Card>
 
-              <button
-                onClick={clearState}
-                className="mt-2 text-xs text-red-600 hover:text-red-700 underline"
-              >
-                Clear and try again
-              </button>
+            <Card className="p-6 border-none shadow-soft-xl bg-white">
+              <div className="flex items-center gap-3 mb-6 pb-6 border-b">
+                <div className="h-10 w-10 rounded-xl bg-amber-100 flex items-center justify-center">
+                  <MessageCircle className="h-5 w-5 text-amber-600" />
+                </div>
+                <h3 className="font-bold text-lg">Quick Questions</h3>
+              </div>
+
+              <div className="space-y-2">
+                {QUICK_QUESTIONS[language].map((q, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => handleQuickQuestion(q)}
+                    disabled={loading}
+                    className="w-full text-left p-3 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-primary/30 hover:shadow-md transition-all text-sm font-medium group"
+                  >
+                    <span className="text-slate-700 group-hover:text-primary">{q}</span>
+                  </button>
+                ))}
+              </div>
+            </Card>
+
+            <Card className="p-6 border-none shadow-soft-xl bg-amber-50 border-l-4 border-l-amber-500">
+               <div className="flex gap-4">
+                  <Info className="h-6 w-6 text-amber-600 shrink-0" />
+                  <div>
+                    <h4 className="font-bold text-amber-900 mb-1">Medical Disclaimer</h4>
+                    <p className="text-xs text-amber-800/80 leading-relaxed">
+                      This AI provides general health information, not medical diagnosis.
+                      If you have serious symptoms, please consult a health worker immediately.
+                    </p>
+                  </div>
+               </div>
+            </Card>
+          </div>
+
+          {/* Main Content / Chat */}
+          <div className="lg:col-span-8 space-y-6">
+            <Card className="p-6 md:p-8 border-none shadow-soft-xl bg-white min-h-[500px] flex flex-col">
+              <div className="flex-1">
+                 {!(loading || streaming || response || error) && (
+                   <div className="h-full flex flex-col items-center justify-center text-center py-20">
+                      <div className="h-20 w-20 bg-primary/5 rounded-full flex items-center justify-center mb-6">
+                        <MessageCircle className="h-10 w-10 text-primary opacity-40" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-slate-800 mb-2">How can I help you today?</h3>
+                      <p className="text-slate-500 max-w-md">
+                        Select a quick question from the sidebar or type your own question below to get started.
+                      </p>
+                   </div>
+                 )}
+
+                 {/* Response Area */}
+                {(loading || streaming || response || error) && (
+                  <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4">
+                    {loading && streaming === '' && (
+                      <div className="flex gap-4 p-4 rounded-2xl bg-primary/5 border border-primary/10">
+                        <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center shrink-0">
+                          <Sparkles className="h-4 w-4 text-white" />
+                        </div>
+                        <div className="space-y-2 py-1 flex-1">
+                          <p className="text-sm font-bold text-primary">AI is thinking...</p>
+                          <div className="h-2 w-24 bg-primary/20 rounded-full animate-pulse"></div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Streaming Markdown Response */}
+                    {streaming && (
+                      <div className="flex gap-4">
+                         <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
+                            <Sparkles className="h-5 w-5 text-white" />
+                         </div>
+                         <div className="flex-1 bg-slate-50 rounded-2xl rounded-tl-none p-6 border border-slate-100 shadow-sm overflow-x-auto">
+                            <div className="prose prose-blue prose-slate max-w-none prose-headings:font-bold prose-p:leading-relaxed">
+                              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {streaming}
+                              </ReactMarkdown>
+                            </div>
+                         </div>
+                      </div>
+                    )}
+
+                    {/* Final Response */}
+                    {response && !loading && (
+                      <div className="flex gap-4">
+                        <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center shrink-0 shadow-lg shadow-primary/20">
+                            <Sparkles className="h-5 w-5 text-white" />
+                        </div>
+                        <div className="flex-1">
+                          <AIResponseDisplay response={response} />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Error */}
+                    {error && (
+                      <div className="p-6 rounded-2xl bg-destructive/5 border border-destructive/20 text-center">
+                        <div className="h-12 w-12 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <Trash2 className="h-6 w-6 text-destructive" />
+                        </div>
+                        <h4 className="font-bold text-destructive mb-1">Something went wrong</h4>
+                        <p className="text-sm text-destructive/80 mb-4">{error}</p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={clearState}
+                          className="border-destructive text-destructive hover:bg-destructive/10"
+                        >
+                          Clear and try again
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Chat Input */}
+              <div className="mt-12 pt-8 border-t">
+                <AIQueryForm
+                  onSubmit={handleCustomQuestion}
+                  isLoading={loading}
+                  disabled={loading}
+                  placeholder={
+                    language === 'en'
+                      ? 'Ask about water safety or health risks...'
+                      : 'Ask bout wata safe or heltn risk...'
+                  }
+                  showLanguageSelect={false}
+                />
+              </div>
+            </Card>
+
+            {/* Resources Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Link to="/health" className="group">
+                <Card className="p-4 bg-white border-none shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group-hover:bg-primary/5">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
+                      <BookOpen className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm">Health Library</h4>
+                      <p className="text-xs text-muted-foreground">Expert tips & guides</p>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+              <Link to="/map" className="group">
+                <Card className="p-4 bg-white border-none shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group-hover:bg-primary/5">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0">
+                      <Map className="h-5 w-5 text-emerald-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm">Water Map</h4>
+                      <p className="text-xs text-muted-foreground">Find safe water</p>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+              <Link to="/maintenance" className="group">
+                <Card className="p-4 bg-white border-none shadow-sm hover:shadow-md hover:-translate-y-1 transition-all group-hover:bg-primary/5">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-lg bg-purple-100 flex items-center justify-center shrink-0">
+                      <Settings className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm">Maintenance</h4>
+                      <p className="text-xs text-muted-foreground">Learn how to fix wells</p>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
             </div>
-          )}
+          </div>
         </div>
-      )}
-
-      {/* Disclaimer */}
-      <div className="bg-yellow-50 border border-yellow-200 p-4 rounded-lg">
-        <p className="text-sm text-yellow-800">
-          <strong>⚠️ Important:</strong> This AI provides
-          general health information, not medical diagnosis.
-          If you have serious symptoms or health concerns,
-          please consult a qualified health worker or doctor
-          immediately.
-        </p>
-      </div>
-
-      {/* Resources */}
-      <div className="bg-white border border-gray-200 p-6 rounded-lg space-y-3">
-        <h3 className="font-semibold">
-          Additional Resources
-        </h3>
-
-        <ul className="space-y-2 text-sm text-gray-700">
-          <li>
-            📚{' '}
-            <a
-              href="/health"
-              className="text-blue-500 hover:underline"
-            >
-              Health Library - Browse pre-written health tips
-            </a>
-          </li>
-
-          <li>
-            🗺️{' '}
-            <a
-              href="/map"
-              className="text-blue-500 hover:underline"
-            >
-              Water Source Map - Find safe water near you
-            </a>
-          </li>
-
-          <li>
-            📋{' '}
-            <a
-              href="/maintenance"
-              className="text-blue-500 hover:underline"
-            >
-              Maintenance Guide - Learn how to maintain wells
-            </a>
-          </li>
-        </ul>
       </div>
     </div>
   )

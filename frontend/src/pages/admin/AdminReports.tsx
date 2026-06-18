@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { ChevronDown, Download, Filter, RefreshCw, AlertCircle, User, Calendar } from 'lucide-react'
+import { ChevronDown, Download, Filter, RefreshCw, AlertCircle, Calendar } from 'lucide-react'
 import { LoadingState, ErrorState } from '@/components/common/LoadingState'
-import { Badge, Button, Card, Input, Select } from '@/components/ui'
+import { Badge, Button, Card, Select } from '@/components/ui'
 import { apiClient, type Report } from '@/services/api'
 import { formatDate, getStatusLabel } from '@/lib/status'
 import { useToast } from '@/contexts/ToastContext'
+import { cn } from '@/lib/utils'
 
 export function AdminReports() {
   const { showToast } = useToast()
@@ -27,11 +28,11 @@ export function AdminReports() {
   const [causeFilter, setCauseFilter] = useState('')
   const [districtFilter, setDistrictFilter] = useState('')
   const [sortBy, setSortBy] = useState('timestamp-desc')
-  const viewMode = 'card'
+  const [viewMode, setViewMode] = useState<'card' | 'table'>('card')
 
   // Pagination
   const [page, setPage] = useState(1)
-  const itemsPerPage = 20
+  const itemsPerPage = 12
   const totalPages = Math.ceil(filteredReports.length / itemsPerPage)
   const paginatedReports = filteredReports.slice(
     (page - 1) * itemsPerPage,
@@ -209,44 +210,45 @@ export function AdminReports() {
   }
 
   return (
-    <div className="page-container space-y-6 py-8">
+    <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
       {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+      <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between bg-white p-8 rounded-3xl shadow-soft-xl border border-slate-100">
         <div>
-          <h1 className="text-3xl font-bold text-primary">All Reports</h1>
-          <p className="text-neutral">
-            {filteredReports.length} of {reports.length} reports
+          <h1 className="text-4xl font-black tracking-tight text-slate-900">Incident Reports</h1>
+          <p className="text-slate-500 font-medium mt-1">
+             Manage and respond to {filteredReports.length} {statusFilter || 'active'} water source issues
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex items-center gap-3">
           <Button
             variant="outline"
             size="sm"
             onClick={() => loadReports(true)}
             disabled={refreshing}
-            className="flex items-center gap-2"
+            className="rounded-xl border-2 font-bold h-11 px-5 border-slate-200"
           >
-            <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
+
           <div className="relative group">
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
-              <Download className="h-4 w-4" />
+            <Button variant="default" size="sm" className="rounded-xl font-bold h-11 px-5 shadow-lg shadow-primary/20">
+              <Download className="h-4 w-4 mr-2" />
               Export
-              <ChevronDown className="h-3 w-3" />
+              <ChevronDown className="h-3 w-3 ml-2" />
             </Button>
-            <div className="absolute right-0 top-full hidden group-hover:block bg-white border border-outline rounded-lg shadow-lg z-10">
+            <div className="absolute right-0 top-full mt-2 hidden group-hover:block bg-white border border-slate-100 rounded-2xl shadow-2xl z-20 min-w-[160px] overflow-hidden">
               <button
                 onClick={() => handleExport('csv')}
-                className="block w-full px-4 py-2 text-left text-sm hover:bg-bgLight"
+                className="block w-full px-4 py-3 text-left text-sm font-bold hover:bg-slate-50 transition-colors"
               >
-                Export as CSV
+                CSV Spreadsheed
               </button>
               <button
                 onClick={() => handleExport('json')}
-                className="block w-full px-4 py-2 text-left text-sm hover:bg-bgLight"
+                className="block w-full px-4 py-3 text-left text-sm font-bold hover:bg-slate-50 transition-colors"
               >
-                Export as JSON
+                JSON Data
               </button>
             </div>
           </div>
@@ -254,84 +256,101 @@ export function AdminReports() {
       </div>
 
       {/* Search and Filters */}
-      <Card>
-        <div className="space-y-4">
-          {/* Search Bar */}
-          <Input
-            label="Search"
-            type="text"
-            placeholder="Search by source name, ID, or cause..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-
-          {/* Filter Grid */}
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <Select
-              label="Status"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              options={[
-                { value: '', label: 'All statuses' },
-                ...uniqueStatuses.map((s) => ({
-                  value: s || '',
-            label: getStatusLabel(s || ''),
-                })),
-              ]}
-            />
-            <Select
-              label="Cause"
-              value={causeFilter}
-              onChange={(e) => setCauseFilter(e.target.value)}
-              options={[
-                { value: '', label: 'All causes' },
-                ...uniqueCauses.map((c) => ({
-                  value: c || '',
-                  label: (c || '').replace(/_/g, ' '),
-                })),
-              ]}
-            />
-            <Select
-              label="District"
-              value={districtFilter}
-              onChange={(e) => setDistrictFilter(e.target.value)}
-              options={[
-                { value: '', label: 'All districts' },
-                ...uniqueDistricts.map((d) => ({
-                  value: d || '',
-                  label: d || '',
-                })),
-              ]}
-            />
-            <Select
-              label="Sort by"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              options={[
-                { value: 'timestamp-desc', label: 'Newest first' },
-                { value: 'timestamp-asc', label: 'Oldest first' },
-                { value: 'source-name', label: 'Source name (A-Z)' },
-                { value: 'severity', label: 'Severity' },
-              ]}
-            />
+      <Card className="border-none shadow-soft-xl p-8 bg-white">
+        <div className="space-y-6">
+          <div className="relative">
+             <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+             <input
+               type="text"
+               placeholder="Search by source name, borehole ID, or reported cause..."
+               value={searchTerm}
+               onChange={(e) => setSearchTerm(e.target.value)}
+               className="w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-slate-900 placeholder:text-slate-400 font-medium focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+             />
           </div>
 
-          {/* Clear Filters */}
-          {(searchTerm || statusFilter || causeFilter || districtFilter) && (
-            <button
-              onClick={() => {
-                setSearchTerm('')
-                setStatusFilter('')
-                setCauseFilter('')
-                setDistrictFilter('')
-              }}
-              className="text-sm text-primary hover:underline"
-            >
-              Clear all filters
-            </button>
-          )}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="space-y-2">
+               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Status</label>
+               <Select
+                 value={statusFilter}
+                 onChange={(e) => setStatusFilter(e.target.value)}
+                 options={[
+                   { value: '', label: 'All Severity Levels' },
+                   ...uniqueStatuses.map((s) => ({
+                     value: s || '',
+                     label: getStatusLabel(s || ''),
+                   })),
+                 ]}
+               />
+            </div>
+            <div className="space-y-2">
+               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Cause Category</label>
+               <Select
+                 value={causeFilter}
+                 onChange={(e) => setCauseFilter(e.target.value)}
+                 options={[
+                   { value: '', label: 'All Issue Types' },
+                   ...uniqueCauses.map((c) => ({
+                     value: c || '',
+                     label: (c || '').replace(/_/g, ' '),
+                   })),
+                 ]}
+               />
+            </div>
+            <div className="space-y-2">
+               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">District</label>
+               <Select
+                 value={districtFilter}
+                 onChange={(e) => setDistrictFilter(e.target.value)}
+                 options={[
+                   { value: '', label: 'All Districts' },
+                   ...uniqueDistricts.map((d) => ({
+                     value: d || '',
+                     label: d || '',
+                   })),
+                 ]}
+               />
+            </div>
+            <div className="space-y-2">
+               <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Sort Order</label>
+               <Select
+                 value={sortBy}
+                 onChange={(e) => setSortBy(e.target.value)}
+                 options={[
+                   { value: 'timestamp-desc', label: 'Newest Reports First' },
+                   { value: 'timestamp-asc', label: 'Oldest Reports First' },
+                   { value: 'source-name', label: 'Source name (A-Z)' },
+                   { value: 'severity', label: 'Priority / Severity' },
+                 ]}
+               />
+            </div>
+          </div>
         </div>
       </Card>
+
+      <div className="flex items-center justify-between mb-4">
+         <div className="flex bg-white p-1 rounded-xl shadow-sm border border-slate-100">
+            <button
+              onClick={() => setViewMode('card')}
+              className={cn(
+                "px-4 py-2 rounded-lg text-xs font-bold transition-all",
+                viewMode === 'card' ? "bg-slate-900 text-white shadow-md" : "text-slate-500 hover:bg-slate-50"
+              )}
+            >
+              Grid View
+            </button>
+            <button
+              onClick={() => setViewMode('table')}
+              className={cn(
+                "px-4 py-2 rounded-lg text-xs font-bold transition-all",
+                viewMode === 'table' ? "bg-slate-900 text-white shadow-md" : "text-slate-500 hover:bg-slate-50"
+              )}
+            >
+              Table View
+            </button>
+         </div>
+      </div>
 
       {/* Reports Display */}
       {paginatedReports.length === 0 ? (
@@ -395,7 +414,7 @@ export function AdminReports() {
                       Details
                     </Button>
                     <Button
-                      variant="primary"
+                      variant="default"
                       size="sm"
                       onClick={() => handleAssignClick(report)}
                     >
@@ -537,12 +556,12 @@ export function AdminReports() {
                 {modalMode === 'view' ? 'Close' : 'Cancel'}
               </Button>
               {modalMode === 'view' && (
-                <Button variant="primary" onClick={() => setModalMode('assign')}>
+                <Button variant="default" onClick={() => setModalMode('assign')}>
                   Create Dispatch
                 </Button>
               )}
               {modalMode === 'assign' && (
-                <Button variant="primary" onClick={handleCreateDispatch}>
+                <Button variant="default" onClick={handleCreateDispatch}>
                   Assign & Dispatch
                 </Button>
               )}
@@ -565,42 +584,61 @@ function ReportCard({
   onAssign: () => void
 }) {
   return (
-    <Card className="flex flex-col gap-3">
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="font-semibold text-primary">{report.source_name || report.source_id}</p>
-          <p className="text-xs text-neutral">{report.source_id?.slice(0, 8)}…</p>
+    <Card className="flex flex-col gap-5 border-none shadow-soft-xl bg-white p-6 hover:shadow-soft-2xl transition-all group overflow-hidden relative">
+      <div className={cn(
+        "absolute top-0 right-0 w-24 h-24 blur-3xl opacity-10 -translate-y-12 translate-x-12 rounded-full transition-all group-hover:scale-150",
+        report.status === 'danger' ? "bg-destructive" :
+        report.status === 'warning' ? "bg-warning" : "bg-success"
+      )}></div>
+
+      <div className="flex items-start justify-between gap-4 relative z-10">
+        <div className="min-w-0">
+          <h4 className="font-black text-slate-900 truncate text-lg">{report.source_name || 'Unnamed Source'}</h4>
+          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{report.source_id?.slice(0, 12)}</p>
         </div>
-        <Badge variant={report.status as any}>{getStatusLabel(report.status || '')}</Badge>
+        <Badge
+           variant={report.status as any}
+           className="rounded-xl px-3 py-1 text-[10px] font-black uppercase shrink-0"
+        >
+          {getStatusLabel(report.status || '')}
+        </Badge>
       </div>
 
-      <div className="space-y-1 text-sm">
-        <p>
-          <span className="font-medium text-neutral">Cause:</span>{' '}
-          <span className="text-neutral-dark">{report.cause_category?.replace(/_/g, ' ')}</span>
-        </p>
-        <p>
-          <span className="font-medium text-neutral">District:</span>{' '}
-          <span className="text-neutral-dark">{report.district}</span>
-        </p>
-        <p>
-          <span className="font-medium text-neutral">Reported:</span>{' '}
-          <span className="text-xs text-neutral">{formatDate(report.timestamp)}</span>
-        </p>
+      <div className="space-y-3 text-sm relative z-10">
+        <div className="flex items-center gap-3">
+           <div className="h-8 w-8 rounded-xl bg-slate-50 flex items-center justify-center">
+              <AlertCircle className="h-4 w-4 text-slate-400" />
+           </div>
+           <div>
+             <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider leading-none mb-0.5">Cause</p>
+             <p className="font-bold text-slate-700">{report.cause_category?.replace(/_/g, ' ')}</p>
+           </div>
+        </div>
+        <div className="flex items-center gap-3">
+           <div className="h-8 w-8 rounded-xl bg-slate-50 flex items-center justify-center">
+              <Calendar className="h-4 w-4 text-slate-400" />
+           </div>
+           <div>
+             <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider leading-none mb-0.5">Reported</p>
+             <p className="font-bold text-slate-700">{formatDate(report.timestamp)}</p>
+           </div>
+        </div>
       </div>
 
       {report.message && (
-        <p className="text-sm text-neutral-dark italic border-l-2 border-primary pl-2">
-          "{report.message}"
-        </p>
+        <div className="bg-slate-50 rounded-2xl p-4 relative z-10">
+           <p className="text-xs text-slate-600 font-medium italic leading-relaxed">
+             "{report.message}"
+           </p>
+        </div>
       )}
 
-      <div className="mt-auto flex gap-2 pt-2">
-        <Button variant="primary" size="sm" className="flex-1" onClick={onViewDetails}>
-          View Details
+      <div className="mt-auto flex gap-3 pt-2 relative z-10">
+        <Button variant="outline" className="flex-1 rounded-xl font-bold h-10 border-slate-200" onClick={onViewDetails}>
+          View Case
         </Button>
-        <Button variant="outline" size="sm" className="flex-1" onClick={onAssign}>
-          Assign
+        <Button variant="default" className="flex-1 rounded-xl font-bold h-10" onClick={onAssign}>
+          Dispatch
         </Button>
       </div>
     </Card>
