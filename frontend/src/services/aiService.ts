@@ -1,4 +1,3 @@
-
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
@@ -144,7 +143,6 @@ class AIServiceClient {
 
   /**
    * Stream AI response in real-time using Server-Sent Events
-   * Returns a Promise that resolves with the full answer, but streams chunks through callback
    */
   async *stream(query: AIQuery): AsyncGenerator<string, void, unknown> {
     if (!query.query || !query.query.trim()) {
@@ -334,6 +332,7 @@ export function useAI() {
   const [error, setError] = useState<string | null>(null)
   const [response, setResponse] = useState<AIResponse | null>(null)
   const [health, setHealth] = useState<HealthStatus | null>(null)
+  const [streaming, setStreaming] = useState('')
   const streamRef = useRef<string>('')
 
   /**
@@ -376,16 +375,29 @@ export function useAI() {
   /**
    * Stream AI response
    */
-  const streamResponse = useCallback(async (query: AIQuery): Promise<string> => {
+  const stream = useCallback(async (query: AIQuery, onChunk?: (chunk: string) => void) => {
     setLoading(true)
     setError(null)
+    setStreaming('')
     streamRef.current = ''
 
     try {
       for await (const chunk of aiService.stream(query)) {
         streamRef.current += chunk
+        setStreaming(streamRef.current)
+        if (onChunk) onChunk(chunk)
       }
-      return streamRef.current
+
+      const response: AIResponse = {
+        answer: streamRef.current,
+        query: query.query,
+        category: query.category || 'general',
+        language: query.language || 'en',
+        context_used: !!query.context,
+        cached: false,
+      }
+      setResponse(response)
+      return response
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Stream failed'
       setError(message)
@@ -445,9 +457,10 @@ export function useAI() {
     error,
     response,
     health,
+    streaming,
     checkHealth,
     ask,
-    streamResponse,
+    stream,
     getWellContext,
     getSuggestedQuestions,
     translate,

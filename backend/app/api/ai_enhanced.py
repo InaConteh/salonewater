@@ -405,15 +405,16 @@ def translate_text():
             return jsonify({'error': 'Target language must be en or krio'}), 400
         
         # Use AI to translate
-        system_prompt = "You are a professional translator between English and Krio (Sierra Leone). Translate accurately and keep the meaning clear and simple."
+        system_prompt = "You are a professional translator between English and Sierra Leonean Krio. Translate the text accurately and naturally. Do not add any explanations or preamble. Just provide the translation."
         
-        query = f"Translate to {target}:\n{text}"
+        query = f"Translate the following text to {target}:\n\n{text}"
         
         translated = ask_cleanflow_ai(
             user_query=query,
             context_type='general',
             language='en',
-            stream=False
+            stream=False,
+            system_prompt_override=system_prompt
         )
         
         return jsonify({
