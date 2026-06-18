@@ -45,7 +45,30 @@ def seed_database():
             )
             admin_user.set_password('admin123')
             db.session.add(admin_user)
-            db.session.commit()
+
+        # Seed Technician User
+        tech_user = User.query.filter_by(username='tech').first()
+        if not tech_user:
+            tech_user = User(
+                username='tech',
+                email='technician@cleanflow.sl',
+                role_id=tech_role.id
+            )
+            tech_user.set_password('tech123')
+            db.session.add(tech_user)
+
+        # Seed Committee User
+        committee_user = User.query.filter_by(username='committee').first()
+        if not committee_user:
+            committee_user = User(
+                username='committee',
+                email='committee@cleanflow.sl',
+                role_id=committee_role.id
+            )
+            committee_user.set_password('committee123')
+            db.session.add(committee_user)
+
+        db.session.commit()
 
         existing_sources = WaterSource.query.count()
         if existing_sources > 0:

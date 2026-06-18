@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { ChevronDown, Download, Filter, RefreshCw, AlertCircle, User, Calendar } from 'lucide-react'
+import { ChevronDown, Download, Filter, RefreshCw, AlertCircle} from 'lucide-react'
 import { LoadingState, ErrorState } from '@/components/common/LoadingState'
 import { Badge, Button, Card, Input, Select } from '@/components/ui'
 import { apiClient, type Report } from '@/services/api'
