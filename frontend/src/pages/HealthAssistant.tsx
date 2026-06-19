@@ -16,9 +16,9 @@ import {
 } from '@/components/ai'
 
 import { Button, Card } from '@/components/ui'
-import { useAI } from '@/hooks/useAI'
+import { useAI } from '@/services/aiService'
 import type { AIQuery } from '@/services/aiService'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/cn'
 
 const QUICK_QUESTIONS = {
   en: [
@@ -40,7 +40,7 @@ const QUICK_QUESTIONS = {
 export function HealthAssistant() {
   const [language, setLanguage] = useState<'en' | 'krio'>('en')
   useEffect(() => {}, [])
-  const { response, streaming, loading, error, stream, clearState } = useAI()
+  const { response, streaming, loading, error, stream } = useAI()
 
   const handleQuickQuestion = (q: string) => {
     stream({
@@ -52,6 +52,12 @@ export function HealthAssistant() {
 
   const handleCustomQuestion = (query: AIQuery) => {
     stream(query)
+  }
+
+  const clearState = () => {
+    // This would typically reload or reset component state
+    // For now, just reload the page to clear all state
+    window.location.reload()
   }
 
   return (

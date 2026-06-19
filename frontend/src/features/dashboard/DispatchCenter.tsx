@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Clock, CheckCircle, AlertCircle, User, MapPin, RefreshCw } from 'lucide-react'
 import { apiClient, type RepairCase, type Report } from '@/services/api'
-import { cn } from '@/lib/utils'
+import { cn } from '@/lib/cn'
 import { ErrorState, LoadingState } from '@/components/common/LoadingState'
 import { Badge, Button, Card, Input, Select } from '@/components/ui'
 import { useToast } from '@/contexts/ToastContext'
