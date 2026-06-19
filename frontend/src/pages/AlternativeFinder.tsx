@@ -42,10 +42,12 @@ export function AlternativeFinder() {
 
   const useGps = () => {
     if (!navigator.geolocation) {
-      setError('GPS not available on this device.')
+      setError('GPS not available on this device. Please enter coordinates manually.')
       return
     }
     setLoading(true)
+    setError(null)
+    
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const la = pos.coords.latitude.toFixed(5)
@@ -54,10 +56,23 @@ export function AlternativeFinder() {
         setLon(lo)
         search(parseFloat(la), parseFloat(lo))
       },
-      () => {
-        setError('Could not get your location.')
+      (err) => {
         setLoading(false)
+        if (err.code === 1) {
+          setError('Location permission denied. Please enable GPS in browser settings.')
+        } else if (err.code === 2) {
+          setError('Position unavailable. Please check your device and try again.')
+        } else if (err.code === 3) {
+          setError('Location request timed out. Please try again.')
+        } else {
+          setError('Could not get your location. Please enter coordinates manually.')
+        }
       },
+      {
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 0,
+      }
     )
   }
 
