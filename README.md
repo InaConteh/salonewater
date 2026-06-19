@@ -127,3 +127,17 @@ For issues, questions, or suggestions, please open a GitHub issue or contact the
 ---
 
 **CleanFlow SL**: Bringing clean water security to every community.
+
+** ScreenShot **
+<img width="1600" height="701" alt="image" src="https://github.com/user-attachments/assets/9a393008-4be9-4423-9255-7763b9f7717c" />
+<img width="1600" height="588" alt="image" src="https://github.com/user-attachments/assets/2e7bfb88-8550-43c5-911a-2785d8b07e03" />
+<img width="1600" height="710" alt="image" src="https://github.com/user-attachments/assets/10855636-8249-4743-92c6-edeb5a7215a7" />
+<img width="1600" height="565" alt="image" src="https://github.com/user-attachments/assets/85e0756d-5d5e-401f-bf6c-424079476806" />
+<img width="1600" height="729" alt="image" src="https://github.com/user-attachments/assets/1c20a1e6-8fa1-4d7f-b4a3-8daf6d2b386f" />
+<img width="1600" height="729" alt="image" src="https://github.com/user-attachments/assets/4e67b27b-aa62-4dae-8466-934bdb4be0ee" />
+
+
+
+
+
+
