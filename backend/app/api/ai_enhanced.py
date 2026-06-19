@@ -68,7 +68,7 @@ def ai_health():
             "status": "healthy" | "unhealthy",
             "ollama": {
                 "status": "healthy" | "unhealthy",
-                "model": "qwen3:4b",
+                "model": "qwen2.5:1.5b",
                 "latency_ms": 245,
                 "error": null
             },
