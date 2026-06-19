@@ -17,10 +17,10 @@ export function FloatingAssistant({
   category = 'general',
 }: FloatingAssistantProps) {
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState<Array<{ role: 'user' | 'ai'; text: string; id: string }>>([])
+  const [messages, setMessages] = useState<Array<{ role: 'user' | 'ai'; text: string }>>([])
   const [input, setInput] = useState('')
   const [language, setLanguage] = useState<'en' | 'krio'>('en')
-  const { loading, error, stream, translate } = useAI()
+  const { loading, error, streamResponse } = useAI()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -35,65 +35,22 @@ export function FloatingAssistant({
     if (!input.trim() || loading) return
 
     const userMessage = input.trim()
-    const userMsgId = Date.now().toString()
-    const aiMsgId = (Date.now() + 1).toString()
-
     setInput('')
-    setMessages((prev) => [...prev, { role: 'user', text: userMessage, id: userMsgId }])
+    setMessages((prev) => [...prev, { role: 'user', text: userMessage }])
 
     try {
-      // Add empty AI message that will be populated by streaming
-      setMessages((prev) => [...prev, { role: 'ai', text: '', id: aiMsgId }])
-
-      await stream({
+      const response = await streamResponse({
         query: userMessage,
         category,
         language,
         context: initialContext,
-      }, (chunk) => {
-        setMessages((prev) =>
-          prev.map(msg =>
-            msg.id === aiMsgId
-              ? { ...msg, text: msg.text + chunk }
-              : msg
-          )
-        )
       })
+
+      setMessages((prev) => [...prev, { role: 'ai', text: response }])
     } catch (err) {
       const errorMsg =
         err instanceof Error ? err.message : 'Failed to get response. Please try again.'
-      setMessages((prev) =>
-        prev.map(msg =>
-          msg.id === aiMsgId
-            ? { ...msg, text: `⚠️ ${errorMsg}` }
-            : msg
-        )
-      )
-    }
-  }
-
-  // Handle language change with immediate translation of last AI message
-  const handleLanguageChange = async (newLang: 'en' | 'krio') => {
-    if (newLang === language || loading) return
-
-    setLanguage(newLang)
-
-    // Find the last AI message to translate it
-    const lastAiMsgIdx = [...messages].reverse().findIndex(m => m.role === 'ai')
-    if (lastAiMsgIdx !== -1) {
-      const idx = messages.length - 1 - lastAiMsgIdx
-      const lastMsg = messages[idx]
-
-      if (lastMsg.text && !lastMsg.text.startsWith('⚠️')) {
-        try {
-          const result = await translate(lastMsg.text, newLang)
-          setMessages(prev => prev.map((m, i) =>
-            i === idx ? { ...m, text: result.translated } : m
-          ))
-        } catch (err) {
-          console.error("Failed to translate message:", err)
-        }
-      }
+      setMessages((prev) => [...prev, { role: 'ai', text: `⚠️ ${errorMsg}` }])
     }
   }
 
@@ -135,9 +92,9 @@ export function FloatingAssistant({
           </div>
         )}
 
-        {messages.map((msg) => (
+        {messages.map((msg, idx) => (
           <div
-            key={msg.id}
+            key={idx}
             className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
             <div
@@ -147,7 +104,7 @@ export function FloatingAssistant({
                   : 'bg-gray-100 text-gray-900 rounded-bl-none'
               }`}
             >
-              <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+              <p className="text-sm">{msg.text}</p>
             </div>
           </div>
         ))}
@@ -174,27 +131,24 @@ export function FloatingAssistant({
       </div>
 
       {/* Language Toggle */}
-      <div className="px-4 py-2 border-t bg-gray-50 flex gap-2 items-center">
-        <span className="text-xs text-gray-500">Language:</span>
+      <div className="px-4 py-2 border-t bg-gray-50 flex gap-2">
         <button
-          onClick={() => handleLanguageChange('en')}
-          disabled={loading}
-          className={`text-xs px-3 py-1 rounded transition-colors ${
+          onClick={() => setLanguage('en')}
+          className={`text-xs px-3 py-1 rounded ${
             language === 'en'
               ? 'bg-blue-500 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          } disabled:opacity-50`}
+              : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+          }`}
         >
           English
         </button>
         <button
-          onClick={() => handleLanguageChange('krio')}
-          disabled={loading}
-          className={`text-xs px-3 py-1 rounded transition-colors ${
+          onClick={() => setLanguage('krio')}
+          className={`text-xs px-3 py-1 rounded ${
             language === 'krio'
               ? 'bg-blue-500 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-          } disabled:opacity-50`}
+              : 'bg-gray-300 text-gray-700 hover:bg-gray-400'
+          }`}
         >
           Krio
         </button>

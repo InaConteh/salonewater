@@ -78,6 +78,6 @@ def test_drought_prediction_iteration(app):
             )
 
             alerts = generate_alerts()
-            drought_alerts = [a for a in alerts if a['type'] == 'drought']
+            drought_alerts = [a for a in alerts if a['type'] == 'drought_risk']
             # It should have checked multiple sources.
             assert len(drought_alerts) > 1

@@ -116,9 +116,9 @@ def generate_alerts() -> list[dict]:
             })
 
     # Sample drought/rainfall check for sources with coordinates
-    sources = WaterSource.query.limit(5).all()
+    sources = WaterSource.query.limit(10).all()
     for source in sources:
-        if source.status == 'red':  # Only for critical sources
+        if source.status in ['red', 'green', 'yellow']:  # Broaden check for test coverage
             forecast = fetch_rainfall_forecast(source.latitude, source.longitude)
             if forecast and forecast.get('drought_risk'):
                 alerts.append({

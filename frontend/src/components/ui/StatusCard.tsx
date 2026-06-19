@@ -1,5 +1,5 @@
 import { WaterDropIcon } from '@/assets/icons'
-import { cn } from '@/lib/cn'
+import { cn } from '@/lib/utils'
 import { formatDate, STATUS_CARD_CLASS, STATUS_LABELS } from '@/lib/status'
 import type { WaterSource } from '@/types'
 import { Badge } from './Badge'
