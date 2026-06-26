@@ -218,7 +218,7 @@ def stream_ai():
                 logger.warning(f"Streaming error: {str(e)}")
                 user_msg = format_error_message(e, user_facing=True)
                 yield f'data: {json.dumps({"error": user_msg, "status": "failed"})}\n\n'
-            except Exception as e:
+            except Exception as  e:
                 logger.error(f"Stream error: {str(e)}")
                 yield f'data: {json.dumps({"error": "Stream interrupted. Please try again.", "status": "failed"})}\n\n'
         
