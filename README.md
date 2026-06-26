@@ -129,12 +129,16 @@ For issues, questions, or suggestions, please open a GitHub issue or contact the
 **Salone Water Watch**: Bringing clean water security to every community.
 
 ** ScreenShot **
-<img width="1600" height="701" alt="image" src="https://github.com/user-attachments/assets/9a393008-4be9-4423-9255-7763b9f7717c" />
-<img width="1600" height="588" alt="image" src="https://github.com/user-attachments/assets/2e7bfb88-8550-43c5-911a-2785d8b07e03" />
-<img width="1600" height="710" alt="image" src="https://github.com/user-attachments/assets/10855636-8249-4743-92c6-edeb5a7215a7" />
-<img width="1600" height="565" alt="image" src="https://github.com/user-attachments/assets/85e0756d-5d5e-401f-bf6c-424079476806" />
-<img width="1600" height="729" alt="image" src="https://github.com/user-attachments/assets/1c20a1e6-8fa1-4d7f-b4a3-8daf6d2b386f" />
-<img width="1600" height="729" alt="image" src="https://github.com/user-attachments/assets/4e67b27b-aa62-4dae-8466-934bdb4be0ee" />
+<img width="960" height="540" alt="image" src="https://github.com/user-attachments/assets/67371694-a43a-418f-bb8d-7cc2a7af8f49" />
+<img width="960" height="540" alt="image" src="https://github.com/user-attachments/assets/f7689e69-214c-4691-8cc0-59a9a5123c21" />
+<img width="960" height="540" alt="image" src="https://github.com/user-attachments/assets/98facc40-5654-4509-891c-f6f9ecbeb994" />
+<img width="960" height="540" alt="image" src="https://github.com/user-attachments/assets/558abd71-e6c7-4c3f-9ddd-797ac15ad82c" />
+<img width="960" height="540" alt="image" src="https://github.com/user-attachments/assets/60376572-5ad7-4084-a864-49adb8c1720a" />
+<img width="960" height="540" alt="image" src="https://github.com/user-attachments/assets/b21e7a82-95a0-4f74-93c7-fbb851150cbe" />
+
+
+
+
 
 
 
