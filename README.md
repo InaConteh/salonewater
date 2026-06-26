@@ -1,10 +1,10 @@
-# CleanFlow SL - Water Security Platform
+# Salone Water Watch - Water Security Platform
 
-A comprehensive water security system designed for rural communities in Sierra Leone. CleanFlow SL leverages a dual-interface (Web + SMS) to ensure accessibility for all users, including those with basic feature phones.
+A comprehensive water security system designed for rural communities in Sierra Leone. Salone Water Watch leverages a dual-interface (Web + SMS) to ensure accessibility for all users, including those with basic feature phones.
 
 ## Project Overview
 
-**CleanFlow SL** addresses the critical gap in clean water access caused by drought, infrastructure failure, and poor management by providing:
+**Salone Water Watch** addresses the critical gap in clean water access caused by drought, infrastructure failure, and poor management by providing:
 
 - Real-time water quality and availability status updates
 - Root cause identification for water source failures
@@ -36,7 +36,7 @@ A comprehensive water security system designed for rural communities in Sierra L
 ## Project Structure
 
 ```
-cleanflow-sl/
+salonewaterwatch/
 ├── backend/                # Flask API and Business Logic
 ├── frontend/               # React Web Application
 ├── docker-compose.yml      # Container orchestration
@@ -100,7 +100,7 @@ Copy `.env.example` to `.env` and configure:
 ```env
 FLASK_APP=wsgi.py
 FLASK_ENV=development
-DATABASE_URL=sqlite:///instance/cleanflow.db
+DATABASE_URL=sqlite:///instance/salonewaterwatch.db
 AT_USERNAME=your_africas_talking_username
 AT_API_KEY=your_africas_talking_api_key
 SECRET_KEY=your_secret_key_here
@@ -126,7 +126,7 @@ For issues, questions, or suggestions, please open a GitHub issue or contact the
 
 ---
 
-**CleanFlow SL**: Bringing clean water security to every community.
+**Salone Water Watch**: Bringing clean water security to every community.
 
 ** ScreenShot **
 <img width="1600" height="701" alt="image" src="https://github.com/user-attachments/assets/9a393008-4be9-4423-9255-7763b9f7717c" />

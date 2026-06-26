@@ -45,7 +45,7 @@ class Config:
     # Database
     SQLALCHEMY_DATABASE_URI = make_sqlite_uri(os.getenv(
         'DATABASE_URL',
-        f"sqlite:///{(BASE_DIR / 'instance' / 'cleanflow.db').resolve().as_posix()}"
+        f"sqlite:///{(BASE_DIR / 'instance' / 'salonewaterwatch.db').resolve().as_posix()}"
     ))
 
 
