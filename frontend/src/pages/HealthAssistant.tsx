@@ -16,7 +16,7 @@ import {
 } from '@/components/ai'
 
 import { Button, Card } from '@/components/ui'
-import { useAI } from '@/hooks/useAI'
+import { useAI } from '@/services/aiService'
 import type { AIQuery } from '@/services/aiService'
 import { cn } from '@/lib/utils'
 

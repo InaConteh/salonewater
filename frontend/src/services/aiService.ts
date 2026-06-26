@@ -327,14 +327,14 @@ export const aiService = new AIServiceClient(apiURL)
 // CUSTOM HOOK FOR REACT
 // ============================================================================
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback } from 'react'
 
 export function useAI() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [response, setResponse] = useState<AIResponse | null>(null)
   const [health, setHealth] = useState<HealthStatus | null>(null)
-  const streamRef = useRef<string>('')
+  const [streaming, setStreaming] = useState<string>('')
 
   /**
    * Check AI health
@@ -359,6 +359,7 @@ export function useAI() {
     setLoading(true)
     setError(null)
     setResponse(null)
+    setStreaming('')
 
     try {
       const result = await aiService.ask(query)
@@ -376,16 +377,29 @@ export function useAI() {
   /**
    * Stream AI response
    */
-  const streamResponse = useCallback(async (query: AIQuery): Promise<string> => {
+  const stream = useCallback(async (query: AIQuery) => {
     setLoading(true)
     setError(null)
-    streamRef.current = ''
+    setResponse(null)
+    setStreaming('')
 
     try {
+      let fullText = ''
       for await (const chunk of aiService.stream(query)) {
-        streamRef.current += chunk
+        fullText += chunk
+        setStreaming(fullText)
       }
-      return streamRef.current
+
+      const finalResponse: AIResponse = {
+        answer: fullText,
+        query: query.query,
+        category: query.category || 'general',
+        language: query.language || 'en',
+        context_used: !!query.context,
+        cached: false,
+      }
+      setResponse(finalResponse)
+      return fullText
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Stream failed'
       setError(message)
@@ -440,18 +454,26 @@ export function useAI() {
     }
   }, [])
 
+  const clearState = useCallback(() => {
+    setResponse(null)
+    setStreaming('')
+    setError(null)
+    setLoading(false)
+  }, [])
+
   return {
     loading,
     error,
     response,
     health,
+    streaming,
     checkHealth,
     ask,
-    streamResponse,
+    stream,
+    clearState,
     getWellContext,
     getSuggestedQuestions,
     translate,
-    streamedText: streamRef.current,
   }
 }
 
