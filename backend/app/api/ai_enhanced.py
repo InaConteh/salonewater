@@ -1,11 +1,11 @@
 """
-Enhanced AI API Endpoints for CleanFlow SL
+Enhanced AI API Endpoints for Salone Water Watch
 Includes streaming, context support, health checks, and error handling
 """
 from flask import request, jsonify, Response, stream_with_context
 from app.api import bp
 from app.services.ai_service_enhanced import (
-    ask_cleanflow_ai,
+    ask_salonewaterwatch_ai,
     check_ollama_health,
     OllamaError,
     format_error_message
@@ -89,7 +89,7 @@ def ai_health():
 @rate_limit(max_requests=10, window_seconds=60)
 def ask_ai():
     """
-    Ask the CleanFlow AI a question
+    Ask the Salone Water Watch AI a question
     
     Request body:
     {
@@ -130,7 +130,7 @@ def ask_ai():
         context = data.get('context')
         
         # Call AI service
-        answer = ask_cleanflow_ai(
+        answer = ask_salonewaterwatch_ai(
             user_query=query,
             context_type=category,
             context=context,
@@ -196,7 +196,7 @@ def stream_ai():
                 yield f'data: {json.dumps({"status": "started"})}\n\n'
                 
                 # Get streaming response
-                response_gen = ask_cleanflow_ai(
+                response_gen = ask_salonewaterwatch_ai(
                     user_query=query,
                     context_type=category,
                     context=context,
@@ -358,7 +358,7 @@ def suggest_questions(context: str):
             'What is safe chlorine level?'
         ],
         'general': [
-            'What is CleanFlow?',
+            'What is Salone Water Watch?',
             'How do I report a problem?',
             'Where can I find clean water nearby?',
             'How do I contact support?',
@@ -409,7 +409,7 @@ def translate_text():
         
         query = f"Translate the following text to {target}:\n\n{text}"
         
-        translated = ask_cleanflow_ai(
+        translated = ask_salonewaterwatch_ai(
             user_query=query,
             context_type='general',
             language='en',

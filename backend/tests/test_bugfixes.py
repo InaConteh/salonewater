@@ -57,11 +57,11 @@ def test_drought_prediction_iteration(app):
     import responses
 
     with app.app_context():
-        # Add 5 sources
+        # Add 5 sources with red status so they are checked for drought
         for i in range(5):
             s = WaterSource(
                 name=f"Source {i}",
-                status="green",
+                status="red",
                 latitude=8.0 + i,
                 longitude=-12.0
             )
@@ -78,6 +78,6 @@ def test_drought_prediction_iteration(app):
             )
 
             alerts = generate_alerts()
-            drought_alerts = [a for a in alerts if a['type'] == 'drought']
+            drought_alerts = [a for a in alerts if a['type'] == 'drought_risk']
             # It should have checked multiple sources.
             assert len(drought_alerts) > 1

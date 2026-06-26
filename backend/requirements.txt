@@ -1,4 +1,4 @@
-# Python Dependencies for CleanFlow SL Backend
+# Python Dependencies for Salone Water Watch Backend
 #
 # Core Framework:
 # - Flask: Lightweight web framework

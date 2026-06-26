@@ -1,4 +1,4 @@
--- CleanFlow SL Sample Dataset (100 Records)
+-- Salone Water Watch Sample Dataset (100 Records)
 INSERT INTO water_sources (id, name, district, status, root_cause, latitude, longitude, last_updated) VALUES
 ('WELL001', 'Waterloo Source 1', 'Waterloo', 'red', 'Dry Well', 8.7535, -12.727, '2026-05-30 22:11:41'),
 ('WELL002', 'Bo Source 2', 'Bo', 'green', 'None', 8.6803, -12.843, '2026-05-16 22:11:41'),

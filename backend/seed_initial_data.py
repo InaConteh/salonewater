@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 # Ensure the local SQLite database is used for seeding.
 BASE_DIR = pathlib.Path(__file__).resolve().parent
-DEFAULT_SQLITE_DB = BASE_DIR / 'instance' / 'cleanflow.db'
+DEFAULT_SQLITE_DB = BASE_DIR / 'instance' / 'salonewaterwatch.db'
 DEFAULT_SQLITE_DB.parent.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault('FLASK_ENV', 'development')
 os.environ.setdefault('DATABASE_URL', f"sqlite:///{DEFAULT_SQLITE_DB.as_posix()}")
@@ -40,7 +40,7 @@ def seed_database():
         if not admin_user:
             admin_user = User(
                 username='admin',
-                email='admin@cleanflow.sl',
+                email='admin@salonewaterwatch.sl',
                 role_id=admin_role.id
             )
             admin_user.set_password('admin123')
@@ -51,7 +51,7 @@ def seed_database():
         if not tech_user:
             tech_user = User(
                 username='tech',
-                email='technician@cleanflow.sl',
+                email='technician@salonewaterwatch.sl',
                 role_id=tech_role.id
             )
             tech_user.set_password('tech123')
@@ -62,7 +62,7 @@ def seed_database():
         if not committee_user:
             committee_user = User(
                 username='committee',
-                email='committee@cleanflow.sl',
+                email='committee@salonewaterwatch.sl',
                 role_id=committee_role.id
             )
             committee_user.set_password('committee123')

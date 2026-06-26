@@ -6,11 +6,11 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: cleanflow-backend
+    container_name: salonewaterwatch-backend
     environment:
       FLASK_APP: wsgi.py
       FLASK_ENV: development
-      DATABASE_URL: sqlite:///instance/cleanflow.db
+      DATABASE_URL: sqlite:///instance/salonewaterwatch.db
       AT_USERNAME: ${AT_USERNAME}
       AT_API_KEY: ${AT_API_KEY}
       SECRET_KEY: ${SECRET_KEY}
@@ -20,17 +20,17 @@ services:
       - ./backend:/app
     command: flask run --host=0.0.0.0
     networks:
-      - cleanflow-network
+      - salonewaterwatch-network
 
   # React Frontend
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: cleanflow-frontend
+    container_name: salonewaterwatch-frontend
     environment:
       VITE_API_URL: http://localhost:5000/api
-      VITE_APP_NAME: CleanFlow SL
+      VITE_APP_NAME: Salone Water Watch
     ports:
       - "3000:3000"
     depends_on:
@@ -40,8 +40,8 @@ services:
       - /app/node_modules
     command: npm run dev
     networks:
-      - cleanflow-network
+      - salonewaterwatch-network
 
 networks:
-  cleanflow-network:
+  salonewaterwatch-network:
     driver: bridge
