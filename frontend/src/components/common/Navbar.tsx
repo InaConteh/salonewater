@@ -50,7 +50,7 @@ export function Navbar() {
             "text-xl font-black tracking-tight transition-colors",
             !scrolled && "text-white"
           )}>
-            CLEAN<span className="text-primary">FLOW</span>
+            SALONE WATER<span className="text-primary">WATCH</span>
           </span>
         </Link>
 
