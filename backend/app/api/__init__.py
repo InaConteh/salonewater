@@ -9,7 +9,7 @@ bp = Blueprint('api', __name__)
 @bp.route('/', methods=['GET'])
 def api_index():
     return {
-        'service': 'CleanFlow SL API',
+        'service': 'Salone Water Watch API',
         'version': 'phase-3',
         'endpoints': [
             '/api/auth/login',

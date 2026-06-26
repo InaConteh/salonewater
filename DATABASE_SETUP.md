@@ -1,9 +1,9 @@
-# Database Initialization Guide for CleanFlow SL
+# Database Initialization Guide for Salone Water Watch
 
-CleanFlow SL is configured to use SQLite for local development. The local database file is:
+Salone Water Watch is configured to use SQLite for local development. The local database file is:
 
 ```text
-backend/instance/cleanflow.db
+backend/instance/salonewaterwatch.db
 ```
 
 ## Setup
@@ -30,7 +30,7 @@ source venv/bin/activate
 Use this database URL for local SQLite:
 
 ```env
-DATABASE_URL=sqlite:///instance/cleanflow.db
+DATABASE_URL=sqlite:///instance/salonewaterwatch.db
 ```
 
 The backend config normalizes this relative SQLite path to an absolute path under `backend/instance`.
@@ -41,4 +41,4 @@ The backend config normalizes this relative SQLite path to an absolute path unde
 python -c "from app import create_app; app=create_app('development'); print(app.config['SQLALCHEMY_DATABASE_URI'])"
 ```
 
-You should see a SQLite URI pointing to `backend/instance/cleanflow.db`.
+You should see a SQLite URI pointing to `backend/instance/salonewaterwatch.db`.

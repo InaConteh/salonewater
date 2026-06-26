@@ -1,5 +1,5 @@
 """
-Enhanced AI Service for CleanFlow SL
+Enhanced AI Service for Salone Water Watch
 Includes streaming support, context injection, multi-language support, and error handling
 """
 import requests
@@ -17,7 +17,7 @@ OLLAMA_TIMEOUT = 30
 
 # System prompts optimized for Sierra Leone context
 SYSTEM_PROMPTS = {
-    "health_en": """You are a health expert for CleanFlow SL, a water security platform in Sierra Leone.
+    "health_en": """You are a health expert for Salone Water Watch, a water security platform in Sierra Leone.
 Your role is to provide practical, life-saving health advice about:
 - Waterborne diseases (cholera, typhoid, dysentery, diarrhea)
 - Water safety (boiling, chlorine treatment, storage)
@@ -33,7 +33,7 @@ Important Rules:
 6. Be specific about quantities (e.g., "boil for 1 minute", "1 cup per 20 liters")
 7. Focus on what rural communities can actually do""",
 
-    "health_krio": """You be di best health expert for CleanFlow SL water platform for Sierra Leone.
+    "health_krio": """You be di best health expert for Salone Water Watch water platform for Sierra Leone.
 Your work na for give practical, life-saving health advice about:
 - Water sickness (cholera, typhoid, belly sick)
 - How for drink safe water (boil am, put chlorine/salt, keep am in clean place)
@@ -79,7 +79,7 @@ Important rules:
 5. Suggest checking the well every month.
 6. If the work hard too much, tell them for call technician.""",
 
-    "general": """You are a helpful assistant for the CleanFlow SL water security platform in Sierra Leone.
+    "general": """You are a helpful assistant for the Salone Water Watch water security platform in Sierra Leone.
 Your role is to provide information about:
 - Water sources and their status
 - Water safety and testing
@@ -89,7 +89,7 @@ Your role is to provide information about:
 
 Be concise, friendly, and helpful. Always prioritize accuracy and safety.""",
 
-    "general_krio": """You be the best helper for the CleanFlow SL water platform in Sierra Leone.
+    "general_krio": """You be the best helper for the Salone Water Watch water platform in Sierra Leone.
 Your work na for give information about:
 - Water wells and how they stay
 - How for make water safe
@@ -164,7 +164,7 @@ def check_ollama_health() -> Dict[str, Any]:
             'error': str(e)
         }
 
-def ask_cleanflow_ai(
+def ask_salonewaterwatch_ai(
     user_query: str,
     context_type: str = "general",
     context: Optional[Dict[str, Any]] = None,
@@ -173,7 +173,7 @@ def ask_cleanflow_ai(
     system_prompt_override: Optional[str] = None
 ) -> str | Generator[str, None, None]:
     """
-    Ask CleanFlow AI a question with optional context
+    Ask Salone Water Watch AI a question with optional context
     
     Args:
         user_query: The user's question

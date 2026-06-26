@@ -55,7 +55,7 @@ def create_app(config_name=None):
             os.mkdir('logs')
 
         file_handler = RotatingFileHandler(
-            'logs/cleanflow.log',
+            'logs/salonewaterwatch.log',
             maxBytes=102402400,
             backupCount=10
         )
@@ -65,12 +65,12 @@ def create_app(config_name=None):
         file_handler.setLevel(logging.INFO)
         app.logger.addHandler(file_handler)
         app.logger.setLevel(logging.INFO)
-        app.logger.info('CleanFlow SL startup')
+        app.logger.info('Salone Water Watch startup')
 
     @app.route('/', methods=['GET'])
     def index():
         return jsonify({
-            'service': 'CleanFlow SL API',
+            'service': 'Salone Water Watch API',
             'health': '/health',
             'api_root': '/api',
             'message': 'Use /api to explore available endpoints.',
@@ -78,7 +78,7 @@ def create_app(config_name=None):
 
     @app.route('/health', methods=['GET'])
     def health():
-        return {'status': 'ok', 'service': 'cleanflow-api'}, 200
+        return {'status': 'ok', 'service': 'salonewaterwatch-api'}, 200
 
     return app
 
