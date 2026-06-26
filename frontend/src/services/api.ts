@@ -23,6 +23,8 @@ export interface Kpis {
   status_red: number
   reports_last_30_days: number
   open_repair_cases: number
+  pending_maintenance: number
+  district_distribution: Record<string, number>
 }
 
 export interface Tip {
@@ -81,6 +83,11 @@ export interface Trends {
     suggested_action?: string
   }>
   alerts: Array<{ type: string; source_id: string; message: string }>
+  maintenance_stats: {
+    by_type: Record<string, number>
+    by_status: Record<string, number>
+    total: number
+  }
 }
 
 export interface GeoJsonFeatureCollection {

@@ -34,6 +34,14 @@ export function Analytics() {
     ? Math.max(...Object.values(trends.by_cause), 1)
     : 1
 
+  const maxMaintType = trends?.maintenance_stats
+    ? Math.max(...Object.values(trends.maintenance_stats.by_type), 1)
+    : 1
+
+  const maxDistrict = kpis?.district_distribution
+    ? Math.max(...Object.values(kpis.district_distribution), 1)
+    : 1
+
   const exportJson = () => {
     if (!trends) return
     const blob = new Blob([JSON.stringify(trends, null, 2)], {
@@ -99,6 +107,38 @@ export function Analytics() {
 
       {/* Main Analytics Grid */}
       <div className="grid gap-6 lg:grid-cols-2">
+        {/* District Distribution */}
+        <Card className="space-y-4 border-none shadow-soft-xl bg-white/80 backdrop-blur-md">
+          <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
+            <PieChart className="h-5 w-5 text-primary" />
+            <h3 className="font-black text-lg text-slate-900">District Distribution</h3>
+          </div>
+          {kpis && Object.keys(kpis.district_distribution).length > 0 ? (
+            <ul className="space-y-4 pt-2">
+              {Object.entries(kpis.district_distribution)
+                .sort(([, a], [, b]) => b - a)
+                .map(([district, count]) => (
+                  <li key={district}>
+                    <div className="mb-2 flex justify-between items-center">
+                      <span className="font-bold text-sm text-slate-700">{district}</span>
+                      <span className="text-xs font-black text-primary">
+                        {count} sources
+                      </span>
+                    </div>
+                    <div className="h-2.5 rounded-full bg-slate-100 overflow-hidden">
+                      <div
+                        className="h-full bg-primary rounded-full transition-all duration-1000"
+                        style={{ width: `${(count / maxDistrict) * 100}%` }}
+                      />
+                    </div>
+                  </li>
+                ))}
+            </ul>
+          ) : (
+             <p className="text-sm text-slate-400 text-center py-12 font-medium italic">No district data available.</p>
+          )}
+        </Card>
+
         {/* Reports by Cause */}
         <Card className="space-y-4">
           <div className="flex items-center gap-2 pb-3 border-b">
@@ -168,6 +208,49 @@ export function Analytics() {
                 </li>
               ))}
             </ul>
+          )}
+        </Card>
+
+        {/* Maintenance stats */}
+        <Card className="space-y-4 border-none shadow-soft-xl bg-white/80 backdrop-blur-md">
+          <div className="flex items-center gap-2 pb-3 border-b border-slate-100">
+            <BarChart3 className="h-5 w-5 text-emerald-600" />
+            <h3 className="font-black text-lg text-slate-900">Maintenance Activity (Period)</h3>
+          </div>
+          {trends?.maintenance_stats && trends.maintenance_stats.total > 0 ? (
+            <div className="space-y-6 pt-2">
+              <div className="grid grid-cols-2 gap-4">
+                 <div className="bg-emerald-50 p-4 rounded-2xl border border-emerald-100">
+                    <p className="text-[10px] uppercase font-black text-emerald-600 tracking-wider">Completed</p>
+                    <p className="text-2xl font-black text-emerald-700">{trends.maintenance_stats.by_status['completed'] || 0}</p>
+                 </div>
+                 <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100">
+                    <p className="text-[10px] uppercase font-black text-amber-600 tracking-wider">Scheduled</p>
+                    <p className="text-2xl font-black text-amber-700">{trends.maintenance_stats.by_status['scheduled'] || 0}</p>
+                 </div>
+              </div>
+
+              <ul className="space-y-4">
+                {Object.entries(trends.maintenance_stats.by_type)
+                  .sort(([, a], [, b]) => b - a)
+                  .map(([type, count]) => (
+                    <li key={type}>
+                      <div className="mb-2 flex justify-between items-center">
+                        <span className="font-bold text-sm text-slate-700">{type}</span>
+                        <span className="text-xs font-black text-emerald-600">{count}</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-slate-100 overflow-hidden">
+                        <div
+                          className="h-full bg-emerald-500 rounded-full transition-all duration-1000"
+                          style={{ width: `${(count / maxMaintType) * 100}%` }}
+                        />
+                      </div>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          ) : (
+            <p className="text-sm text-slate-400 text-center py-12 font-medium italic">No maintenance activity recorded in this period.</p>
           )}
         </Card>
       </div>

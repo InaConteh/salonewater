@@ -20,7 +20,7 @@ export function FloatingAssistant({
   const [messages, setMessages] = useState<Array<{ role: 'user' | 'ai'; text: string }>>([])
   const [input, setInput] = useState('')
   const [language, setLanguage] = useState<'en' | 'krio'>('en')
-  const { loading, error, streamResponse } = useAI()
+  const { loading, error, stream } = useAI()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -39,7 +39,7 @@ export function FloatingAssistant({
     setMessages((prev) => [...prev, { role: 'user', text: userMessage }])
 
     try {
-      const response = await streamResponse({
+      const response = await stream({
         query: userMessage,
         category,
         language,

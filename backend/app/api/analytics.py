@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from flask import Response, request
 
 from app.api import bp
-from app.models import RepairCase, Report, WaterSource
+from app.models import MaintenanceLog, RepairCase, Report, WaterSource
 from app.services.prediction_engine import analyze_source_risk, generate_alerts
 
 
@@ -14,9 +14,12 @@ from app.services.prediction_engine import analyze_source_risk, generate_alerts
 def get_kpis():
     sources = WaterSource.query.all()
     status_counts = Counter(s.status for s in sources)
+    district_counts = Counter(s.district for s in sources if s.district)
+
     since = datetime.utcnow() - timedelta(days=30)
     recent_reports = Report.query.filter(Report.timestamp >= since).count()
     open_cases = RepairCase.query.filter(RepairCase.status == 'open').count()
+    pending_maint = MaintenanceLog.query.filter(MaintenanceLog.completion_status == 'scheduled').count()
 
     return {
         'total_sources': len(sources),
@@ -25,6 +28,8 @@ def get_kpis():
         'status_red': status_counts.get('red', 0),
         'reports_last_30_days': recent_reports,
         'open_repair_cases': open_cases,
+        'pending_maintenance': pending_maint,
+        'district_distribution': dict(district_counts),
     }
 
 
@@ -44,6 +49,10 @@ def get_trends():
         day = report.timestamp.strftime('%Y-%m-%d') if report.timestamp else 'unknown'
         by_day[day] = by_day.get(day, 0) + 1
 
+    maint_logs = MaintenanceLog.query.filter(MaintenanceLog.scheduled_date >= since).all()
+    maint_by_type = Counter(log.task_type for log in maint_logs)
+    maint_by_status = Counter(log.completion_status for log in maint_logs)
+
     payload = {
         'period_days': days,
         'total_reports': len(reports),
@@ -51,6 +60,11 @@ def get_trends():
         'by_day': dict(sorted(by_day.items())),
         'risk_sources': analyze_source_risk(),
         'alerts': generate_alerts(),
+        'maintenance_stats': {
+            'by_type': dict(maint_by_type),
+            'by_status': dict(maint_by_status),
+            'total': len(maint_logs),
+        },
     }
 
     fmt = (request.args.get('format') or 'json').lower()

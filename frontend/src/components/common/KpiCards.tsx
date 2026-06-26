@@ -26,6 +26,7 @@ export function KpiCards({ kpis, loading }: KpiCardsProps) {
     { label: 'Unsafe (red)', value: kpis.status_red, color: 'text-danger' },
     { label: 'Reports (30 days)', value: kpis.reports_last_30_days, color: 'text-body' },
     { label: 'Open repairs', value: kpis.open_repair_cases, color: 'text-primary' },
+    { label: 'Pending Maint.', value: kpis.pending_maintenance, color: 'text-primary' },
   ]
 
   return (
