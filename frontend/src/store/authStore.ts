@@ -36,7 +36,11 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: () => !!get().token,
     }),
     {
+<<<<<<< HEAD
       name: 'cleanflow-auth',
+=======
+      name: 'salonewaterwatch-auth',
+>>>>>>> origin/rename-salone-water-watch-6798015821729430602
       partialize: (s) => ({
         token: s.token,
         role: s.role,

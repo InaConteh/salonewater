@@ -14,7 +14,11 @@ export function Footer() {
               <div className="h-10 w-10 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
                 <Droplet className="h-6 w-6 text-white" fill="white" />
               </div>
+<<<<<<< HEAD
               <span className="text-xl font-black tracking-tight text-white">CLEAN<span className="text-primary">FLOW</span></span>
+=======
+              <span className="text-xl font-black tracking-tight text-white">SALONE<span className="text-primary">WATERWATCH</span></span>
+>>>>>>> origin/rename-salone-water-watch-6798015821729430602
             </Link>
             <p className="text-sm leading-relaxed">
               Securing Sierra Leone's water future through real-time monitoring,
@@ -66,7 +70,11 @@ export function Footer() {
               </li>
               <li className="flex gap-3">
                 <Mail className="h-5 w-5 text-primary shrink-0" />
+<<<<<<< HEAD
                 <span>support@cleanflowsl.org</span>
+=======
+                <span>support@salonewaterwatch.org</span>
+>>>>>>> origin/rename-salone-water-watch-6798015821729430602
               </li>
             </ul>
           </div>
@@ -74,7 +82,11 @@ export function Footer() {
 
         <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs font-medium">
+<<<<<<< HEAD
             © {year} CleanFlow SL Platform. Built for the public good in Sierra Leone.
+=======
+            © {year} Salone Water Watch Platform. Built for the public good in Sierra Leone.
+>>>>>>> origin/rename-salone-water-watch-6798015821729430602
           </p>
           <div className="flex gap-6 text-xs font-bold uppercase tracking-widest">
             <span className="text-slate-600">MIT Licensed</span>

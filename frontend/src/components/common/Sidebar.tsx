@@ -7,8 +7,12 @@ import {
   BarChart3,
   Bell,
   Users,
+<<<<<<< HEAD
   ChevronRight,
   Clock
+=======
+  ChevronRight
+>>>>>>> origin/rename-salone-water-watch-6798015821729430602
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -16,7 +20,10 @@ const links = [
   { to: '/admin', label: 'Dashboard', icon: LayoutDashboard, end: true },
   { to: '/admin/reports', label: 'Issue Reports', icon: FileText },
   { to: '/admin/sources', label: 'Water Sources', icon: Droplet },
+<<<<<<< HEAD
   { to: '/admin/maintenance', label: 'Preventative Maint.', icon: Clock },
+=======
+>>>>>>> origin/rename-salone-water-watch-6798015821729430602
   { to: '/admin/dispatch', label: 'Repair Dispatch', icon: Wrench },
   { to: '/admin/analytics', label: 'Data Analytics', icon: BarChart3 },
   { to: '/admin/alerts', label: 'System Alerts', icon: Bell },

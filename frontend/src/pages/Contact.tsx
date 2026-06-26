@@ -45,7 +45,11 @@ export function Contact() {
                     </div>
                     <div>
                       <p className="text-white/60 text-sm font-medium">Email us</p>
+<<<<<<< HEAD
                       <p className="text-lg font-bold">hello@cleanflowsl.org</p>
+=======
+                      <p className="text-lg font-bold">hello@salonewaterwatch.org</p>
+>>>>>>> origin/rename-salone-water-watch-6798015821729430602
                     </div>
                   </div>
                   <div className="flex gap-4">

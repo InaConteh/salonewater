@@ -60,7 +60,11 @@ export function FloatingAssistant({
         onClick={() => setIsOpen(true)}
         aria-label="Open AI Assistant"
         className="fixed bottom-6 right-6 h-14 w-14 rounded-full bg-blue-500 text-white shadow-lg hover:bg-blue-600 transition-colors flex items-center justify-center text-2xl hover:scale-110 transform duration-200"
+<<<<<<< HEAD
         title="Open CleanFlow Assistant"
+=======
+        title="Open Salone Water Watch Assistant"
+>>>>>>> origin/rename-salone-water-watch-6798015821729430602
       >
         💧
       </button>
@@ -72,7 +76,11 @@ export function FloatingAssistant({
       {/* Header */}
       <div className="bg-blue-500 text-white p-4 flex justify-between items-center">
         <div>
+<<<<<<< HEAD
           <h3 className="font-semibold">CleanFlow Assistant</h3>
+=======
+          <h3 className="font-semibold">Salone Water Watch Assistant</h3>
+>>>>>>> origin/rename-salone-water-watch-6798015821729430602
           <p className="text-xs opacity-90">Ask about water safety, maintenance, or health</p>
         </div>
         <button
