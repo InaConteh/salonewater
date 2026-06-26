@@ -50,11 +50,7 @@ export function Analytics() {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     a.href = url
-<<<<<<< HEAD
-    a.download = `cleanflow-trends-${days}d.json`
-=======
     a.download = `salonewaterwatch-trends-${days}d.json`
->>>>>>> origin/rename-salone-water-watch-6798015821729430602
     a.click()
     URL.revokeObjectURL(url)
   }
@@ -63,11 +59,7 @@ export function Analytics() {
     const url = apiClient.getTrendsCsvUrl(parseInt(days, 10) || 30)
     const a = document.createElement('a')
     a.href = url
-<<<<<<< HEAD
-    a.download = `cleanflow-trends-${days}d.csv`
-=======
     a.download = `salonewaterwatch-trends-${days}d.csv`
->>>>>>> origin/rename-salone-water-watch-6798015821729430602
     if (token) {
       fetch(url, { headers: { Authorization: `Bearer ${token}` } })
         .then((r) => r.blob())
@@ -167,7 +159,7 @@ export function Analytics() {
                     </div>
                     <div className="h-2 rounded-full bg-bgLight overflow-hidden">
                       <div
-                        className="h-2 bg-gradient-to-r from-primary to-primary-container rounded-full transition-all"
+                        className={`h-2 bg-gradient-to-r from-primary to-primary-container rounded-full transition-all`}
                         style={{ width: `${(count / maxCause) * 100}%` }}
                       />
                     </div>

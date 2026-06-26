@@ -58,7 +58,6 @@ export interface RepairCase {
   updated_at?: string | null
 }
 
-<<<<<<< HEAD
 export interface MaintenanceLog {
   id: string
   source_id: string
@@ -71,8 +70,6 @@ export interface MaintenanceLog {
   updated_at?: string | null
 }
 
-=======
->>>>>>> origin/rename-salone-water-watch-6798015821729430602
 export interface Trends {
   period_days: number
   total_reports: number
@@ -172,7 +169,6 @@ export const apiClient = {
 
   getMaintenanceReminders: () =>
     api.get<{ reminders: unknown[] }>('/dispatch/reminders'),
-<<<<<<< HEAD
 
   getMaintenanceLogs: (params?: { source_id?: string; status?: string }) =>
     api.get<{ maintenance_logs: MaintenanceLog[] }>('/maintenance', { params }),
@@ -186,8 +182,6 @@ export const apiClient = {
     api.patch<MaintenanceLog>(`/maintenance/${id}`, payload),
 
   deleteMaintenanceLog: (id: string) => api.delete(`/maintenance/${id}`),
-=======
->>>>>>> origin/rename-salone-water-watch-6798015821729430602
 }
 
 export const CAUSE_OPTIONS = [

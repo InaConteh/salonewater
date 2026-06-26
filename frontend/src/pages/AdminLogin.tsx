@@ -42,11 +42,7 @@ export function AdminLogin() {
     <div className="flex min-h-screen flex-col items-center justify-center bg-bgLight px-4 py-12">
       <Link to="/" className="mb-6 flex items-center gap-2 text-primary">
         <WaterDropIcon className="h-10 w-10" />
-<<<<<<< HEAD
-        <span className="text-xl font-bold">CleanFlow SL</span>
-=======
         <span className="text-xl font-bold">Salone Water Watch</span>
->>>>>>> origin/rename-salone-water-watch-6798015821729430602
       </Link>
       <Card title="Admin sign in" className="w-full max-w-md">
         <form onSubmit={handleSubmit} className="space-y-4">

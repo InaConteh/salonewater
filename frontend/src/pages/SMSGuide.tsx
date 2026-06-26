@@ -129,11 +129,7 @@ export function SMSGuide() {
         <div>
           <h1 className="text-3xl font-bold">SMS command guide</h1>
           <p className="mt-1 text-neutral">
-<<<<<<< HEAD
-            Text these commands to your local CleanFlow number. English & Krio.
-=======
             Text these commands to your local Salone Water Watch number. English & Krio.
->>>>>>> origin/rename-salone-water-watch-6798015821729430602
           </p>
         </div>
         {isAdmin && (

@@ -16,11 +16,7 @@ const publicLinks = [
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-<<<<<<< HEAD
-  const appName = import.meta.env.VITE_APP_NAME || 'CleanFlow SL'
-=======
   const appName = import.meta.env.VITE_APP_NAME || 'Salone Water Watch'
->>>>>>> origin/rename-salone-water-watch-6798015821729430602
   const token = useAuthStore((s) => s.token)
   const logout = useAuthStore((s) => s.logout)
 
@@ -54,11 +50,7 @@ export function Navbar() {
             "text-xl font-black tracking-tight transition-colors",
             !scrolled && "text-white"
           )}>
-<<<<<<< HEAD
-            SALONE WATER<span className="text-primary">WATCH</span>
-=======
             SALONE<span className="text-primary">WATERWATCH</span>
->>>>>>> origin/rename-salone-water-watch-6798015821729430602
           </span>
         </Link>
 
@@ -137,11 +129,7 @@ export function Navbar() {
                  <div className="h-10 w-10 bg-primary rounded-xl flex items-center justify-center">
                     <Droplet className="h-6 w-6 text-white" fill="white" />
                  </div>
-<<<<<<< HEAD
-                 <span className="text-xl font-black tracking-tight">CLEAN<span className="text-primary">FLOW</span></span>
-=======
                  <span className="text-xl font-black tracking-tight">SALONE<span className="text-primary">WATERWATCH</span></span>
->>>>>>> origin/rename-salone-water-watch-6798015821729430602
               </div>
               <button
                 className="p-2 rounded-xl bg-slate-100 text-slate-600"
