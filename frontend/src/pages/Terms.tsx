@@ -6,11 +6,7 @@ export function Terms() {
       <h1 className="text-3xl font-bold">Terms of use</h1>
       <Card title="MIT License">
         <p className="text-sm text-body">
-<<<<<<< HEAD
-          CleanFlow SL is provided under the MIT License. You may use, copy, modify, merge,
-=======
           Salone Water Watch is provided under the MIT License. You may use, copy, modify, merge,
->>>>>>> origin/rename-salone-water-watch-6798015821729430602
           publish, distribute, sublicense, and/or sell copies of the software, subject to
           the license conditions included in the repository.
         </p>

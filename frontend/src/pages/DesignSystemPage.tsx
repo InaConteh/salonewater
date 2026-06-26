@@ -31,11 +31,7 @@ export function DesignSystemPage() {
       <header>
         <h1 className="text-3xl font-bold">Design System</h1>
         <p className="mt-2 max-w-2xl text-neutral-dark">
-<<<<<<< HEAD
-          Phase 4 component library — CleanFlow SL colors, typography, and accessible UI
-=======
           Phase 4 component library — Salone Water Watch colors, typography, and accessible UI
->>>>>>> origin/rename-salone-water-watch-6798015821729430602
           patterns.
         </p>
       </header>

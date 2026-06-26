@@ -84,11 +84,7 @@ export function AIButton({
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-96 overflow-hidden flex flex-col">
             {/* Header */}
             <div className="bg-blue-500 text-white p-4 flex justify-between items-center">
-<<<<<<< HEAD
-              <h3 className="font-semibold">Ask CleanFlow AI</h3>
-=======
               <h3 className="font-semibold">Ask Salone Water Watch AI</h3>
->>>>>>> origin/rename-salone-water-watch-6798015821729430602
               <button
                 onClick={() => {
                   setIsOpen(false)
